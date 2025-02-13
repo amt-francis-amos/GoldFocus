@@ -58,7 +58,7 @@ const Navbar = () => {
         {isAuthenticated ? (
           <button
             onClick={handleLogout}
-            className="hidden md:block bg-yellow-900 text-white px-5 py-2 rounded-full hover:bg-red-700 transition"
+            className="hidden md:block bg-yellow-900 text-white px-8 py-3  transition"
           >
             Logout
           </button>
@@ -107,7 +107,7 @@ const Navbar = () => {
               ) : (
                 <Link
                   to="/contact"
-                  className="bg-black text-white px-5 py-2 rounded-full"
+                  className="bg-black text-white px-8 py-3 rounded"
                   onClick={() => setIsOpen(false)}
                 >
                   Get Started
