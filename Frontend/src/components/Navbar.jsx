@@ -58,7 +58,7 @@ const Navbar = () => {
         {isAuthenticated ? (
           <button
             onClick={handleLogout}
-            className="hidden md:block bg-red-600 text-white px-5 py-2 rounded-full hover:bg-red-700 transition"
+            className="hidden md:block bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-red-700 transition"
           >
             Logout
           </button>
@@ -71,13 +71,13 @@ const Navbar = () => {
           </Link>
         )}
 
-        {/* Mobile Menu Toggle */}
+     
         <button className="md:hidden text-black" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
+  
       {isOpen && (
         <div className="md:hidden bg-[#FFD700] py-4">
           <ul className="flex flex-col items-center space-y-4">
