@@ -11,16 +11,16 @@ const App = () => {
 
   return (
     <div>
-      {/* Show Navbar only when authenticated and not on login page */}
+     
       {isAuthenticated && location.pathname !== "/login" && <Navbar />}
       
       <Routes>
-        {/* Define a route for "/" */}
+     
         <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/login" />} />
         
         <Route path="/login" element={<Login />} />
         
-        {/* Ensure authenticated users see Home */}
+        
         <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
         
      
