@@ -1,46 +1,78 @@
-import React from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Footer from "./components/Footer";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Services from "./pages/Services";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FiUser, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { asssts } from "../assets/assets";
 
-const App = () => {
-  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-  const location = useLocation();
+const Login = () => {
+  const [accountID, setAccountID] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  // ✅ Correct login credentials (Replace with actual values)
+  const validCredentials = {
+    accountID: "admin",
+    password: "password123",
+  };
+
+  const handleLogin = () => {
+    if (accountID === validCredentials.accountID && password === validCredentials.password) {
+      localStorage.setItem("isAuthenticated", "true");
+      navigate("/home");
+    } else {
+      alert("Invalid credentials. Please try again.");
+    }
+  };
 
   return (
-    <div>
+    <div className="h-screen flex justify-center items-center bg-gray-100">
+      <div className="bg-white p-8 rounded-lg mt-10 shadow-lg w-96">
+        <img src={asssts.goldLogo} className="w-20 mx-auto mb-5" alt="" />
 
-      {isAuthenticated && location.pathname !== "/login" && <Navbar />}
+        <div className="mb-4">
+          <label className="block text-gray-600">Account ID</label>
+          <div className="flex items-center border border-gray-300 p-2 rounded">
+            <FiUser className="text-gray-500 mr-2" />
+            <input
+              type="text"
+              placeholder="Enter your ID"
+              className="w-full outline-none"
+              value={accountID}
+              onChange={(e) => setAccountID(e.target.value)}
+            />
+          </div>
+        </div>
 
-      <Routes>
-       
-        <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/login" />} />
+        <div className="mb-4">
+          <label className="block text-gray-600">Password</label>
+          <div className="flex items-center border border-gray-300 p-2 rounded">
+            <FiLock className="text-gray-500 mr-2" />
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              className="w-full outline-none"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-gray-500"
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
+          </div>
+        </div>
 
-        <Route path="/login" element={isAuthenticated ? <Navigate to="/home" /> : <Login />} />
-
-        {isAuthenticated ? (
-          <>
-            <Route path="/home" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/contact" element={<Contact />} />
-          </>
-        ) : (
-          <>
-     
-            <Route path="*" element={<Navigate to="/login" />} />
-          </>
-        )}
-      </Routes>
-
-      <Footer />
+        <button
+          onClick={handleLogin}
+          className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-gray-800 transition"
+        >
+          Login
+        </button>
+      </div>
     </div>
   );
 };
 
-export default App;
+export default Login;
