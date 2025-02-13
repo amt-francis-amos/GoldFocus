@@ -42,7 +42,7 @@ const Navbar = () => {
         </ul>
 
     
-        <Link to="/login" className="hidden md:block bg-black text-white px-5 py-2 rounded-full hover:bg-gray-800 transition">
+        <Link to="/contact" className="hidden md:block bg-black text-white px-5 py-2 rounded-full hover:bg-gray-800 transition">
           Get Started
         </Link>
 
@@ -72,7 +72,7 @@ const Navbar = () => {
             ))}
             <li>
               <Link
-                to="/login"
+                to="/contact"
                 className="bg-black text-white px-5 py-2 rounded-full"
                 onClick={() => setIsOpen(false)}
               >
