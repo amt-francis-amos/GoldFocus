@@ -11,7 +11,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  // ✅ Correct login credentials (Replace with actual values)
+
   const validCredentials = {
     accountID: "admin",
     password: "password123",
@@ -21,7 +21,7 @@ const Login = () => {
     if (accountID === validCredentials.accountID && password === validCredentials.password) {
       localStorage.setItem("isAuthenticated", "true");
       toast.success("Login successful!", { position: "top-center" });
-      setTimeout(() => navigate("/home"), 2000); // Delay navigation for toast
+      setTimeout(() => navigate("/home"), 1000); 
     } else {
       toast.error("Invalid credentials. Please try again.", { position: "top-center" });
     }
@@ -29,7 +29,7 @@ const Login = () => {
 
   return (
     <div className="h-screen flex justify-center items-center bg-gray-100">
-      <ToastContainer /> {/* ✅ Toast container to show messages */}
+      <ToastContainer /> 
       
       <div className="bg-white p-8 rounded-lg mt-10 shadow-lg w-96">
         <img src={asssts.goldLogo} className="w-20 mx-auto mb-5" alt="" />
