@@ -5,8 +5,9 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Footer from "./components/Footer";
 import About from "./pages/About";
-import Services from "./pages/services";
 import Contact from "./pages/Contact";
+import Services from "./pages/Services";
+
 
 const App = () => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
@@ -25,7 +26,7 @@ const App = () => {
         
         <Route path="/about" element={<About />} />
         
-        <Route path="/services" element={<Services />} />
+        <Route path="/services" element={<Services/>} />
         
         <Route path="/contact" element={<Contact />} />
         
