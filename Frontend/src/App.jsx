@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Footer from "./components/Footer";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import Services from "./pages/Services";
 
 
 const App = () => {
