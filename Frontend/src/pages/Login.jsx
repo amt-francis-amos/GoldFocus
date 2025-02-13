@@ -32,7 +32,7 @@ const Login = () => {
       <ToastContainer /> 
       
       <div className="bg-white p-8 rounded-lg mt-10 shadow-lg w-96">
-        <img src={asssts.goldLogo} className="w-20 mx-auto mb-5" alt="" />
+        <img src={assets.goldLogo} className="w-20 mx-auto mb-5" alt="" />
 
         <div className="mb-4">
           <label className="block text-gray-600">Account ID</label>
