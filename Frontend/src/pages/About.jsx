@@ -18,7 +18,7 @@ const About = () => {
       
           <div className="relative">
             <img
-              src={assets.heroImg }
+              src={assets.goldImg}
               alt="Gold Bars"
               className="rounded-lg shadow-lg"
             />

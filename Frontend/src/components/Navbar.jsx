@@ -20,7 +20,7 @@ const Navbar = () => {
         
    
         <Link to="/" className="text-black font-bold text-2xl">
-         <img className="w-20" src={asssts.goldLogo} alt="" />
+         <img className="w-20" src={assets.goldLogo} alt="" />
         </Link>
 
         {/* Desktop Menu */}

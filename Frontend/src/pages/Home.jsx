@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { FaCoins, FaHandshake, FaQuoteLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { asssts } from "../assets/assets";
+import { assets } from "../assets/assets";
 
 const Home = () => {
   return (
@@ -10,7 +10,7 @@ const Home = () => {
      
       <motion.section 
         className="relative bg-cover bg-center h-[80vh] flex items-center text-center"
-        style={{ backgroundImage: `url(${asssts.heroImg})` }}
+        style={{ backgroundImage: `url(${assets.heroImg})` }}
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
