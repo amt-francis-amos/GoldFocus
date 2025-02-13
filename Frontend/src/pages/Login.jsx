@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FiUser, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { asssts } from "../assets/assets";
+import { assets } from "../assets/assets";
 
 const Login = () => {
   const [accountID, setAccountID] = useState("");
