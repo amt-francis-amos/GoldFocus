@@ -17,7 +17,7 @@ const Home = () => {
       >
         <div className="container mx-auto px-6">
           <motion.h1 
-            className="text-4xl md:text-6xl font-bold text-white"
+            className="text-2xl md:text-5xl font-bold text-white"
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{ duration: 1 }}
