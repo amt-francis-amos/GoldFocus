@@ -9,19 +9,20 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Check authentication state on component mount & route change
   useEffect(() => {
     const authStatus = localStorage.getItem("isAuthenticated") === "true";
     setIsAuthenticated(authStatus);
   }, [location.pathname]);
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    setIsAuthenticated(false);
-    navigate("/login");
+    localStorage.removeItem("isAuthenticated"); // Remove auth from localStorage
+    setIsAuthenticated(false); // Update state
+    navigate("/login"); // Redirect to login page
   };
 
   const menuItems = [
-    { name: "Home", path: "/" },
+    { name: "Home", path: "/home" },
     { name: "About", path: "/about" },
     { name: "Services", path: "/services" },
     { name: "Contact", path: "/contact" },
