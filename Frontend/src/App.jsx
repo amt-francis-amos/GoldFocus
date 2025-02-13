@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Footer from "./components/Footer";
 import About from "./pages/About";
 import Services from "./pages/services";
+import Contact from "./pages/Contact";
 
 const App = () => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
@@ -26,7 +27,7 @@ const App = () => {
         
         <Route path="/services" element={<Services />} />
         
-        <Route path="/contact" element={<Login />} />
+        <Route path="/contact" element={<Contact />} />
         
         
         <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
