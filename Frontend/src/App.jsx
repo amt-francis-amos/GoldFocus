@@ -23,7 +23,7 @@ const App = () => {
         {/* Ensure authenticated users see Home */}
         <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
         
-        {/* Catch-all route for undefined paths */}
+     
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       
