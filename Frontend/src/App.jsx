@@ -8,7 +8,6 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 
-
 const App = () => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const location = useLocation();
@@ -17,27 +16,21 @@ const App = () => {
     <div>
      
       {isAuthenticated && location.pathname !== "/login" && <Navbar />}
-      
+
       <Routes>
-     
-        <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/login" />} />
-        
+        <Route
+          path="/"
+          element={isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/login" />}
+        />
         <Route path="/login" element={<Login />} />
-        
         <Route path="/about" element={<About />} />
-        
-        <Route path="/services" element={<Services/>} />
-        
+        <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
-        
-        
         <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
-        
-     
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-      
-      <Footer />
+
+      {location.pathname !== "/login" && <Footer />}
     </div>
   );
 };
