@@ -6,16 +6,17 @@ import Login from "./pages/Login";
 import Footer from "./components/Footer";
 
 const App = () => {
+  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+  const location = useLocation();
 
- 
   return (
     <div>
-      <Navbar />
+      {isAuthenticated && location.pathname !== "/" && <Navbar />}
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route
           path="/home"
-          element={ <Home /> }
+          element={isAuthenticated ? <Home /> : <Navigate to="/" />}
         />
       </Routes>
       <Footer />
