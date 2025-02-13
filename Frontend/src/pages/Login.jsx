@@ -14,17 +14,15 @@ const App = () => {
 
   return (
     <div>
-      {/* Show Navbar only when authenticated */}
+
       {isAuthenticated && location.pathname !== "/login" && <Navbar />}
 
       <Routes>
-        {/* Redirect from "/" based on authentication status */}
+       
         <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/login" />} />
 
-        {/* Public Route (Only for non-authenticated users) */}
         <Route path="/login" element={isAuthenticated ? <Navigate to="/home" /> : <Login />} />
 
-        {/* Private Routes - Only accessible if logged in */}
         {isAuthenticated ? (
           <>
             <Route path="/home" element={<Home />} />
@@ -34,7 +32,7 @@ const App = () => {
           </>
         ) : (
           <>
-            {/* If not authenticated, redirect to login */}
+     
             <Route path="*" element={<Navigate to="/login" />} />
           </>
         )}
