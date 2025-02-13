@@ -5,7 +5,7 @@ const Contact = () => {
   return (
     <div className="bg-gray-100 text-gray-900">
       <div className="container mx-auto px-6 py-12 lg:py-20">
-        {/* Page Title */}
+    
         <div className="text-center">
           <h1 className="text-4xl lg:text-5xl font-bold text-yellow-600">
             Contact Us
@@ -15,9 +15,9 @@ const Contact = () => {
           </p>
         </div>
 
-        {/* Contact Details */}
+ 
         <div className="mt-12 grid md:grid-cols-2 gap-10 items-center">
-          {/* Left - Contact Information */}
+         
           <div className="space-y-6">
             <div className="flex items-center space-x-4">
               <FaMapMarkerAlt className="text-yellow-600 text-2xl" />
@@ -41,7 +41,7 @@ const Contact = () => {
             </div>
           </div>
 
-          {/* Right - Contact Form */}
+       
           <div className="bg-white shadow-lg rounded-lg p-8">
             <h2 className="text-2xl font-semibold text-yellow-700 mb-4">
               Send Us a Message
@@ -87,7 +87,7 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* Google Maps (Optional) */}
+ 
         <div className="mt-16">
           <h2 className="text-3xl font-semibold text-yellow-700 text-center">
             Our Location
