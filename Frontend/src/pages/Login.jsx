@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiUser, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { asssts } from "../assets/assets";
 
 const Login = () => {
@@ -18,14 +20,17 @@ const Login = () => {
   const handleLogin = () => {
     if (accountID === validCredentials.accountID && password === validCredentials.password) {
       localStorage.setItem("isAuthenticated", "true");
-      navigate("/home");
+      toast.success("Login successful!", { position: "top-center" });
+      setTimeout(() => navigate("/home"), 2000); // Delay navigation for toast
     } else {
-      alert("Invalid credentials. Please try again.");
+      toast.error("Invalid credentials. Please try again.", { position: "top-center" });
     }
   };
 
   return (
     <div className="h-screen flex justify-center items-center bg-gray-100">
+      <ToastContainer /> {/* ✅ Toast container to show messages */}
+      
       <div className="bg-white p-8 rounded-lg mt-10 shadow-lg w-96">
         <img src={asssts.goldLogo} className="w-20 mx-auto mb-5" alt="" />
 
