@@ -18,7 +18,7 @@ const About = () => {
           transition={{ duration: 1, ease: "easeOut" }}
           className="text-center"
         >
-          <h1 className="text-4xl lg:text-5xl mt-20 font-bold text-black">
+          <h1 className="text-4xl lg:text-5xl mt-20 font-bold text-yellow-600">
             About Us
           </h1>
           <motion.p
