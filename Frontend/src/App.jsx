@@ -9,23 +9,19 @@ import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 
 const App = () => {
- 
   return (
     <div>
-     
-   <Navbar />
+      <Navbar />
 
       <Routes>
-      
         <Route path="/login" element={<Login />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
-  
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/" element={<Home />} />
       </Routes>
 
-      {location.pathname !== "/login" && <Footer />}
+      <Footer />
     </div>
   );
 };
