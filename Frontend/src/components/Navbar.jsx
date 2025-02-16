@@ -10,15 +10,15 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is logged in (from localStorage)
+    // Check if user is logged in
     const user = localStorage.getItem("user");
-    setIsAuthenticated(!!user);
+    setIsAuthenticated(user === "true"); // Ensure it's a boolean value
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user"); // Remove user session
+    localStorage.removeItem("user"); // Clear session
     setIsAuthenticated(false);
-    navigate("/"); // Redirect to home after logout
+    navigate("/"); // Redirect to home
   };
 
   return (
