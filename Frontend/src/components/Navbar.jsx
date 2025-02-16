@@ -1,11 +1,26 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import { assets } from "../assets/assets";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Check if the user is authenticated (persist state)
+  useEffect(() => {
+    const loggedIn = localStorage.getItem("isAuthenticated") === "true";
+    setIsAuthenticated(loggedIn);
+  }, []);
+
+  // Handle Logout
+  const handleLogout = () => {
+    localStorage.removeItem("isAuthenticated"); // Clear auth status
+    setIsAuthenticated(false);
+    navigate("/"); // Redirect to Home after logout
+  };
 
   return (
     <nav className="bg-[#FFD700] shadow-md fixed w-full top-0 left-0 z-50">
@@ -59,10 +74,22 @@ const Navbar = () => {
           </li>
         </ul>
 
-        {/* Login Button */}
-        <Link to="/login" className="hidden md:block bg-black text-white px-8 py-2 rounded hover:bg-gray-800 transition">
-          Login
-        </Link>
+        {/* Conditional Rendering for Login/Logout */}
+        {isAuthenticated ? (
+          <button
+            onClick={handleLogout}
+            className="hidden md:block bg-red-600 text-white px-8 py-2 rounded hover:bg-red-700 transition"
+          >
+            Logout
+          </button>
+        ) : (
+          <Link
+            to="/login"
+            className="hidden md:block bg-black text-white px-8 py-2 rounded hover:bg-gray-800 transition"
+          >
+            Login
+          </Link>
+        )}
 
         {/* Mobile Menu Toggle */}
         <button className="md:hidden text-black" onClick={() => setIsOpen(!isOpen)}>
@@ -118,11 +145,27 @@ const Navbar = () => {
                 Contact
               </Link>
             </li>
-            <li>
-              <Link to="/login" className="bg-black text-white px-8 py-2 rounded" onClick={() => setIsOpen(false)}>
+
+            {/* Mobile Login/Logout */}
+            {isAuthenticated ? (
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsOpen(false);
+                }}
+                className="bg-red-600 text-white px-8 py-2 rounded"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="bg-black text-white px-8 py-2 rounded"
+                onClick={() => setIsOpen(false)}
+              >
                 Login
               </Link>
-            </li>
+            )}
           </ul>
         </div>
       )}
