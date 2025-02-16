@@ -85,17 +85,30 @@ const Home = () => {
           <h2 className="text-3xl font-bold text-gray-800">What Our Clients Say</h2>
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
-              { text: `"Gold Limited has helped me grow my investment portfolio significantly. Highly recommended!"`, name: "- James K." },
-              { text: `"Their transparency and professionalism make them the best in the industry."`, name: "- Linda M." }
+              { 
+                text: `"Gold Limited has helped me grow my investment portfolio significantly. Highly recommended!"`, 
+                name: "James K.",
+                image: "https://randomuser.me/api/portraits/men/32.jpg" 
+              },
+              { 
+                text: `"Their transparency and professionalism make them the best in the industry."`, 
+                name: "Linda M.",
+                image: "https://randomuser.me/api/portraits/women/44.jpg" 
+              }
             ].map((testimonial, index) => (
               <motion.div 
                 key={index} 
-                className="bg-white p-6 rounded-lg shadow-lg"
+                className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center"
                 initial={{ scale: 0.9 }}
                 whileInView={{ scale: 1 }}
                 transition={{ duration: 0.5 }}
               >
-                <FaQuoteLeft className="text-3xl text-yellow-500 mx-auto" />
+                <img 
+                  src={testimonial.image} 
+                  alt={testimonial.name} 
+                  className="w-16 h-16 rounded-full object-cover border-2 border-yellow-500"
+                />
+                <FaQuoteLeft className="text-3xl text-yellow-500 mt-4" />
                 <p className="mt-4 text-gray-600">{testimonial.text}</p>
                 <h3 className="mt-4 font-semibold">{testimonial.name}</h3>
               </motion.div>
