@@ -9,17 +9,16 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Check if the user is authenticated (persist state)
   useEffect(() => {
-    const loggedIn = localStorage.getItem("isAuthenticated") === "true";
-    setIsAuthenticated(loggedIn);
+    // Check if user is logged in (from localStorage)
+    const user = localStorage.getItem("user");
+    setIsAuthenticated(!!user);
   }, []);
 
-  // Handle Logout
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated"); // Clear auth status
+    localStorage.removeItem("user"); // Remove user session
     setIsAuthenticated(false);
-    navigate("/"); // Redirect to Home after logout
+    navigate("/"); // Redirect to home after logout
   };
 
   return (
@@ -32,53 +31,25 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-6 text-black font-medium">
-          <li>
-            <Link
-              to="/"
-              className={`${
-                location.pathname === "/" ? "font-bold underline text-gray-900" : "hover:text-gray-700"
-              }`}
-            >
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/about"
-              className={`${
-                location.pathname === "/about" ? "font-bold underline text-gray-900" : "hover:text-gray-700"
-              }`}
-            >
-              About
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/services"
-              className={`${
-                location.pathname === "/services" ? "font-bold underline text-gray-900" : "hover:text-gray-700"
-              }`}
-            >
-              Services
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/contact"
-              className={`${
-                location.pathname === "/contact" ? "font-bold underline text-gray-900" : "hover:text-gray-700"
-              }`}
-            >
-              Contact
-            </Link>
-          </li>
+          {["/", "/about", "/services", "/contact"].map((path, index) => (
+            <li key={index}>
+              <Link
+                to={path}
+                className={`${
+                  location.pathname === path ? "font-bold underline text-gray-900" : "hover:text-gray-700"
+                }`}
+              >
+                {path === "/" ? "Home" : path.slice(1).charAt(0).toUpperCase() + path.slice(2)}
+              </Link>
+            </li>
+          ))}
         </ul>
 
-        {/* Conditional Rendering for Login/Logout */}
+        {/* Login / Logout Button */}
         {isAuthenticated ? (
           <button
             onClick={handleLogout}
-            className="hidden md:block bg-red-600 text-white px-8 py-2 rounded hover:bg-red-700 transition"
+            className="hidden md:block bg-red-600 text-white px-8 py-2 rounded hover:bg-red-800 transition"
           >
             Logout
           </button>
@@ -101,52 +72,20 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden bg-[#FFD700] py-4">
           <ul className="flex flex-col items-center space-y-4">
-            <li>
-              <Link
-                to="/"
-                className={`${
-                  location.pathname === "/" ? "font-bold underline text-gray-900" : "text-black"
-                }`}
-                onClick={() => setIsOpen(false)}
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/about"
-                className={`${
-                  location.pathname === "/about" ? "font-bold underline text-gray-900" : "text-black"
-                }`}
-                onClick={() => setIsOpen(false)}
-              >
-                About
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/services"
-                className={`${
-                  location.pathname === "/services" ? "font-bold underline text-gray-900" : "text-black"
-                }`}
-                onClick={() => setIsOpen(false)}
-              >
-                Services
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/contact"
-                className={`${
-                  location.pathname === "/contact" ? "font-bold underline text-gray-900" : "text-black"
-                }`}
-                onClick={() => setIsOpen(false)}
-              >
-                Contact
-              </Link>
-            </li>
+            {["/", "/about", "/services", "/contact"].map((path, index) => (
+              <li key={index}>
+                <Link
+                  to={path}
+                  className={`${
+                    location.pathname === path ? "font-bold underline text-gray-900" : "text-black"
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {path === "/" ? "Home" : path.slice(1).charAt(0).toUpperCase() + path.slice(2)}
+                </Link>
+              </li>
+            ))}
 
-            {/* Mobile Login/Logout */}
             {isAuthenticated ? (
               <button
                 onClick={() => {
@@ -158,11 +97,7 @@ const Navbar = () => {
                 Logout
               </button>
             ) : (
-              <Link
-                to="/login"
-                className="bg-black text-white px-8 py-2 rounded"
-                onClick={() => setIsOpen(false)}
-              >
+              <Link to="/login" className="bg-black text-white px-8 py-2 rounded" onClick={() => setIsOpen(false)}>
                 Login
               </Link>
             )}
