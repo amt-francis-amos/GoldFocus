@@ -11,14 +11,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
 
-  const handleLogin = () => {
-    toast.success("Login Successful");
-  };
-
-  const handleSignup = () => {
-    toast.success("Signup Successful");
-  };
-
+ 
   return (
     <div className="min-h-screen flex flex-col mt-20 justify-center items-center bg-gray-100">
       <ToastContainer />
@@ -84,7 +77,7 @@ const Login = () => {
         </div>
 
         <button
-          onClick={isLogin ? handleLogin : handleSignup}
+          
           className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-gray-800 transition-all duration-300 hover:scale-105"
         >
           {isLogin ? "Login" : "Sign Up"}
@@ -93,7 +86,7 @@ const Login = () => {
         <p className="text-center mt-4 text-gray-600">
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
-            onClick={() => setIsLogin(!isLogin)}
+           
             className="text-yellow-500 font-semibold transition-colors duration-300 hover:text-gray-800"
           >
             {isLogin ? "Sign Up" : "Login"}

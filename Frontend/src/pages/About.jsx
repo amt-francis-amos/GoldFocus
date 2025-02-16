@@ -11,14 +11,14 @@ const About = () => {
       transition={{ duration: 1 }}
       className="bg-gray-100 text-gray-900"
     >
-      <div className="container mx-auto px-6 py-12 mt-30 lg:py-20">
+      <div className="container mx-auto px-6 py-12 lg:py-20">
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
           className="text-center"
         >
-          <h1 className="text-4xl lg:text-5xl font-bold text-black">
+          <h1 className="text-4xl lg:text-5xl mt-20 font-bold text-black">
             About Us
           </h1>
           <motion.p
