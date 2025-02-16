@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaCoins, FaHandshake, FaQuoteLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { assets } from "../assets/assets";
+import Stats from "../components/Stats";
 
 const Home = () => {
   return (
@@ -40,7 +41,9 @@ const Home = () => {
   </div>
 </motion.section>
 
-
+  <section className="py-16">
+    <Stats />
+  </section>
    
       <section className="py-16 bg-gray-100">
         <div className="container mx-auto px-6 text-center">
