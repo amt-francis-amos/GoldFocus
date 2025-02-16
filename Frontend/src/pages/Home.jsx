@@ -9,7 +9,8 @@ const Home = () => {
     <div className="bg-gray-100 text-gray-900">
      
       <motion.section 
-        className="relative bg-cover bg-center h-[80vh] flex items-center text-center"
+       className="relative bg-cover bg-center min-h-screen flex items-center text-center"
+
         style={{ backgroundImage: `url(${assets.heroImg})` }}
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
