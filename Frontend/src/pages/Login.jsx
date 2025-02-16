@@ -38,9 +38,9 @@ const Login = () => {
       toast.success(response.data.message);
       localStorage.setItem("token", response.data.token);
 
-      // Redirect user to home page after successful login
+  
       if (isLogin) {
-        setTimeout(() => navigate("/"), 2000); // Redirect after showing success toast
+        setTimeout(() => navigate("/"), 2000); 
       }
     } catch (error) {
       console.error("Error:", error.response || error.message);
