@@ -1,25 +1,13 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import { assets } from "../assets/assets";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
+  
 
-  // Check authentication state on component mount & route change
-  useEffect(() => {
-    const authStatus = localStorage.getItem("isAuthenticated") === "true";
-    setIsAuthenticated(authStatus);
-  }, [location.pathname]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated"); // Remove auth from localStorage
-    setIsAuthenticated(false); // Update state
-    navigate("/login"); // Redirect to login page
-  };
 
   const menuItems = [
     { name: "Home", path: "/home" },
@@ -55,21 +43,14 @@ const Navbar = () => {
         </ul>
 
   
-        {isAuthenticated ? (
-          <button
-            onClick={handleLogout}
-            className="hidden md:block bg-yellow-900 text-white px-8 py-3  transition"
-          >
-            Logout
-          </button>
-        ) : (
+        
           <Link
-            to="/contact"
-            className="hidden md:block bg-black text-white px-5 py-2 rounded-full hover:bg-gray-800 transition"
+            to="/"
+            className="hidden md:block bg-black text-white px-8 py-2 rounded hover:bg-gray-800 transition"
           >
-            Get Started
+           Login
           </Link>
-        )}
+        
 
      
         <button className="md:hidden text-black" onClick={() => setIsOpen(!isOpen)}>
@@ -97,22 +78,14 @@ const Navbar = () => {
               </li>
             ))}
             <li>
-              {isAuthenticated ? (
-                <button
-                  onClick={handleLogout}
-                  className="bg-yellow-900 text-white px-5 py-2 rounded-full"
-                >
-                  Logout
-                </button>
-              ) : (
                 <Link
-                  to="/contact"
-                  className="bg-black text-white px-8 py-3 rounded"
+                  to="/"
+                  className="bg-black text-white px-8 py-2 rounded"
                   onClick={() => setIsOpen(false)}
                 >
-                  Get Started
+                  Login
                 </Link>
-              )}
+              
             </li>
           </ul>
         </div>
