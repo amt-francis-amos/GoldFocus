@@ -41,9 +41,7 @@ const Home = () => {
   </div>
 </motion.section>
 
-  <section className="py-16">
-    <Stats />
-  </section>
+
    
       <section className="py-16 bg-gray-100">
         <div className="container mx-auto px-6 text-center">
@@ -76,7 +74,9 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
-
+      <section className="py-16 bg-gray-900">
+    <Stats />
+  </section>
       <section className="py-16 bg-white">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold text-gray-800">What Our Clients Say</h2>

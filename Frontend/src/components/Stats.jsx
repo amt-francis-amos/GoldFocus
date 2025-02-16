@@ -10,7 +10,7 @@ const Stats = () => {
   ];
 
   return (
-    <div className="flex flex-wrap justify-center gap-8 p-8 bg-gray-100 text-center">
+    <div className="flex flex-wrap justify-center gap-8 p-8  text-center">
       {stats.map((stat, index) => (
         <div key={index} className="bg-white shadow-md p-6 rounded-lg w-48">
           <h3 className="text-3xl font-bold text-blue-600">
