@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import axios from "axios";
 import { FiUser, FiLock, FiEye, FiEyeOff, FiMail } from "react-icons/fi";
 import { ToastContainer, toast } from "react-toastify";
@@ -12,29 +13,35 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     const url = isLogin
       ? "http://localhost:5000/api/users/login"
       : "http://localhost:5000/api/users/register";
     const payload = isLogin
       ? { email, password }
       : { accountID, email, password };
-  
+
     try {
       console.log("Sending request to:", url);
       console.log("Payload:", payload);
-  
+
       const response = await axios.post(url, payload, {
         headers: { "Content-Type": "application/json" },
       });
-  
+
       console.log("Response:", response.data);
       toast.success(response.data.message);
       localStorage.setItem("token", response.data.token);
+
+      // Redirect user to home page after successful login
+      if (isLogin) {
+        setTimeout(() => navigate("/"), 2000); // Redirect after showing success toast
+      }
     } catch (error) {
       console.error("Error:", error.response || error.message);
       toast.error(
@@ -44,12 +51,10 @@ const Login = () => {
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="min-h-screen flex flex-col mt-20 justify-center items-center bg-gray-100">
       <ToastContainer />
-
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full transform transition-all duration-300 ease-in-out">
         <img
           src={assets.goldLogo}
