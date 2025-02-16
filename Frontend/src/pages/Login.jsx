@@ -18,45 +18,39 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
     const url = isLogin
       ? "http://localhost:5000/api/users/login"
       : "http://localhost:5000/api/users/register";
     const payload = isLogin
       ? { email, password }
       : { accountID, email, password };
-
+  
     try {
-      console.log("Sending request to:", url);
-      console.log("Payload:", payload);
-
       const response = await axios.post(url, payload, {
         headers: { "Content-Type": "application/json" },
       });
-
-      console.log("Response:", response.data);
+  
       toast.success(response.data.message);
-
+  
       if (isLogin) {
-        // If login is successful, save token and redirect to home
+       
+        localStorage.setItem("user", "true");
         localStorage.setItem("token", response.data.token);
         setTimeout(() => navigate("/"), 2000);
       } else {
-        // If signup is successful, redirect to login page
         setTimeout(() => {
           setIsLogin(true);
           navigate("/login");
         }, 2000);
       }
     } catch (error) {
-      console.error("Error:", error.response || error.message);
-      toast.error(
-        error.response?.data?.message || "An error occurred. Try again."
-      );
+      toast.error(error.response?.data?.message || "An error occurred. Try again.");
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex flex-col mt-20 justify-center items-center bg-gray-100">
