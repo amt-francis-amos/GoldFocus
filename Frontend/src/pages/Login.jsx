@@ -36,11 +36,17 @@ const Login = () => {
 
       console.log("Response:", response.data);
       toast.success(response.data.message);
-      localStorage.setItem("token", response.data.token);
 
-  
       if (isLogin) {
-        setTimeout(() => navigate("/"), 2000); 
+        // If login is successful, save token and redirect to home
+        localStorage.setItem("token", response.data.token);
+        setTimeout(() => navigate("/"), 2000);
+      } else {
+        // If signup is successful, redirect to login page
+        setTimeout(() => {
+          setIsLogin(true);
+          navigate("/login");
+        }, 2000);
       }
     } catch (error) {
       console.error("Error:", error.response || error.message);
