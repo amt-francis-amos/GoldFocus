@@ -37,23 +37,21 @@ const Navbar = () => {
 
        
         <ul className="hidden md:flex space-x-6 text-black font-medium">
-          {["/", "/about", "/services", "/contact"].map((path, index) => (
-            <li key={index}>
-              <Link
-                to={path}
-                className={`${
-                  location.pathname === path
-                    ? "font-bold underline text-gray-900"
-                    : "hover:text-gray-700"
-                }`}
-              >
-                {path === "/"
-                  ? "Home"
-                  : path.slice(1).charAt(0).toUpperCase() + path.slice(2)}
-              </Link>
-            </li>
-          ))}
-        </ul>
+  {["/", "/about", "/services", "/contact"].map((path, index) => (
+    <li key={index} className="relative group">
+      <Link
+        to={path}
+        className={`relative pb-2 transition duration-300 ${
+          location.pathname === path ? "font-bold text-gray-900" : "hover:text-gray-700"
+        }`}
+      >
+        {path === "/" ? "Home" : path.slice(1).charAt(0).toUpperCase() + path.slice(2)}
+        <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-gray-900 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
+      </Link>
+    </li>
+  ))}
+</ul>
+
 
      
         {isAuthenticated ? (
