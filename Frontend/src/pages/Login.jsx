@@ -20,10 +20,10 @@ const Login= () => {
   };
 
   return (
-    <div className="h-screen flex mt-10 justify-center items-center bg-gray-100">
+    <div className="h-screen flex justify-center mt-30 items-center bg-gray-100">
       <ToastContainer />
       
-      <div className="bg-white p-8 rounded-lg mt-10 shadow-lg w-96">
+      <div className="bg-white p-8 rounded-lg  shadow-lg w-96">
         <img src={assets.goldLogo} className="w-20 mx-auto mb-5" alt="Logo" />
 
         <h2 className="text-xl font-semibold text-center mb-4">
