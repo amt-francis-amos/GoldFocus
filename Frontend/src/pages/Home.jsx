@@ -8,41 +8,38 @@ import Stats from "../components/Stats";
 const Home = () => {
   return (
     <div className="bg-gray-100 text-gray-900">
-     
-     <motion.section 
-  className="relative bg-cover bg-center min-h-screen flex items-center text-center"
-  style={{ backgroundImage: `url(${assets.heroImg})` }}
-  initial={{ opacity: 0, y: 50 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 1 }}
->
- 
+      {/* Hero Section */}
+      <motion.section 
+        className="relative bg-cover bg-center min-h-screen flex items-center text-center"
+        style={{ backgroundImage: `url(${assets.heroImg})` }}
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+      >
+        <div className="container mx-auto px-6 relative z-10">
+          <h2 className="text-white text-2xl">15+ Years of Experience</h2>
+          <motion.h1 
+            className="text-2xl md:text-5xl font-bold text-white"
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1 }}
+          >
+            Secure Your Future with <span className="text-yellow-500">Gold Investments</span>
+          </motion.h1>
+          <p className="text-lg text-white mt-4">Trusted & transparent gold trading for a brighter tomorrow.</p>
+          <motion.div 
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1.1 }}
+            transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
+          >
+            <Link to="/login" className="mt-6 inline-block bg-yellow-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-yellow-600 transition">
+              Access Vault Login
+            </Link>
+          </motion.div>
+        </div>
+      </motion.section>
 
-  <div className="container mx-auto px-6 relative z-10">
-    <h2 className="text-white text-2xl">15+ Years of Experience</h2>
-    <motion.h1 
-      className="text-2xl md:text-5xl font-bold text-white"
-      initial={{ scale: 0.8 }}
-      animate={{ scale: 1 }}
-      transition={{ duration: 1 }}
-    >
-      Secure Your Future with <span className="text-yellow-500">Gold Investments</span>
-    </motion.h1>
-    <p className="text-lg text-white mt-4">Trusted & transparent gold trading for a brighter tomorrow.</p>
-    <motion.div 
-      initial={{ scale: 0.8 }}
-      animate={{ scale: 1.1 }}
-      transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
-    >
-      <Link to="/login" className="mt-6 inline-block bg-yellow-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-yellow-600 transition">
-        Access Vault Login
-      </Link>
-    </motion.div>
-  </div>
-</motion.section>
-
-
-   
+      {/* Services Section */}
       <section className="py-16 bg-gray-100">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold text-gray-800">Our Services</h2>
@@ -62,11 +59,13 @@ const Home = () => {
             ].map((service, index) => (
               <motion.div 
                 key={index} 
-                className="bg-white p-6 rounded-lg shadow-lg"
+                className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center"
                 whileHover={{ scale: 1.1 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="text-5xl text-yellow-500 mx-auto">{service.icon}</div>
+                <div className="flex justify-center items-center text-5xl text-yellow-500 mx-auto h-16 w-16">
+                  {service.icon}
+                </div>
                 <h3 className="mt-4 text-xl font-semibold">{service.title}</h3>
                 <p className="mt-2 text-gray-600">{service.desc}</p>
               </motion.div>
@@ -74,9 +73,13 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Stats Section */}
       <section className="py-16 bg-gray-900">
-    <Stats />
-  </section>
+        <Stats />
+      </section>
+
+      {/* Testimonials Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold text-gray-800">What Our Clients Say</h2>
@@ -101,7 +104,7 @@ const Home = () => {
         </div>
       </section>
 
- 
+      {/* CTA Section */}
       <motion.section 
         className="py-16 bg-gray-600 text-white"
         initial={{ opacity: 0 }}
