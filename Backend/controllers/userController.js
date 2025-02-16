@@ -1,29 +1,28 @@
 import bcrypt from 'bcryptjs';
-import User from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
+import User from '../models/userModel.js';
+import { v4 as uuidv4 } from 'uuid';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 // Register User
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    return res.status(400).json({ success: false, message: 'Missing Details' });
+    return res.status(400).json({ success: false, message: 'All fields are required' });
   }
 
   try {
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ success: false, message: 'User already exists' });
+      return res.status(409).json({ success: false, message: 'User already exists' }); 
     }
 
-    // Generate Unique Account ID
-    let accountID;
-    let unique = false;
-    while (!unique) {
-      accountID = Math.floor(100000 + Math.random() * 900000); // Random 6-digit number
-      const existingUser = await User.findOne({ accountID });
-      if (!existingUser) unique = true;
-    }
+   
+    const accountID = uuidv4(); 
+
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -37,7 +36,12 @@ export const registerUser = async (req, res) => {
 
     await newUser.save();
 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    const token = jwt.sign(
+      { id: newUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+    );
 
     res.status(201).json({
       success: true,
@@ -52,7 +56,7 @@ export const registerUser = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
@@ -61,21 +65,27 @@ export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ success: false, message: 'Missing credentials' });
+    return res.status(400).json({ success: false, message: 'Email and password are required' });
   }
 
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ success: false, message: 'Invalid credentials' });
+      return res.status(401).json({ success: false, message: 'Invalid credentials' }); // 401 Unauthorized
     }
 
+    
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ success: false, message: 'Invalid credentials' });
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+    );
 
     res.status(200).json({
       success: true,
@@ -90,6 +100,6 @@ export const loginUser = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
