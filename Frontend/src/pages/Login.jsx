@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 import { FiUser, FiLock, FiEye, FiEyeOff, FiMail } from "react-icons/fi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,8 +11,33 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
 
- 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const url = isLogin ? "http://localhost:5000/api/users/login" : "http://localhost:5000/api/users/register";
+    const payload = isLogin
+      ? { email, password }
+      : { accountID, email, password };
+
+    try {
+      const response = await axios.post(url, payload, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      toast.success(response.data.message);
+      localStorage.setItem("token", response.data.token);
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "An error occurred. Try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col mt-20 justify-center items-center bg-gray-100">
       <ToastContainer />
@@ -27,66 +53,73 @@ const Login = () => {
           {isLogin ? "Login" : "Sign Up"}
         </h2>
 
-        <div className={`transition-opacity duration-300 ${isLogin ? "opacity-0 h-0 overflow-hidden" : "opacity-100 h-auto mb-4"}`}>
-          <label className="block text-gray-600">Email</label>
-          <div className="flex items-center border border-gray-300 p-2 rounded transition-all duration-300 focus-within:border-yellow-500">
-            <FiMail className="text-gray-500 mr-2" />
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full outline-none"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-        </div>
+        <form onSubmit={handleSubmit}>
+          {!isLogin && (
+            <div className="mb-4">
+              <label className="block text-gray-600">Account ID</label>
+              <div className="flex items-center border border-gray-300 p-2 rounded focus-within:border-yellow-500">
+                <FiUser className="text-gray-500 mr-2" />
+                <input
+                  type="number"
+                  placeholder="Enter your ID"
+                  className="w-full outline-none"
+                  value={accountID}
+                  onChange={(e) => setAccountID(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
 
-        <div className="mb-4">
-          <label className="block text-gray-600">Account ID</label>
-          <div className="flex items-center border border-gray-300 p-2 rounded transition-all duration-300 focus-within:border-yellow-500">
-            <FiUser className="text-gray-500 mr-2" />
-            <input
-              type="number"
-              placeholder="Enter your ID"
-              className="w-full outline-none"
-              value={accountID}
-              onChange={(e) => setAccountID(e.target.value)}
-            />
+          <div className="mb-4">
+            <label className="block text-gray-600">Email</label>
+            <div className="flex items-center border border-gray-300 p-2 rounded focus-within:border-yellow-500">
+              <FiMail className="text-gray-500 mr-2" />
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="w-full outline-none"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="mb-4">
-          <label className="block text-gray-600">Password</label>
-          <div className="flex items-center border border-gray-300 p-2 rounded transition-all duration-300 focus-within:border-yellow-500">
-            <FiLock className="text-gray-500 mr-2" />
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-              className="w-full outline-none"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-500 transition-transform duration-300 hover:scale-110"
-            >
-              {showPassword ? <FiEyeOff /> : <FiEye />}
-            </button>
+          <div className="mb-4">
+            <label className="block text-gray-600">Password</label>
+            <div className="flex items-center border border-gray-300 p-2 rounded focus-within:border-yellow-500">
+              <FiLock className="text-gray-500 mr-2" />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                className="w-full outline-none"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-gray-500"
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
+            </div>
           </div>
-        </div>
 
-        <button
-          
-          className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-gray-800 transition-all duration-300 hover:scale-105"
-        >
-          {isLogin ? "Login" : "Sign Up"}
-        </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full bg-yellow-500 text-white py-2 rounded-lg transition-all duration-300 hover:scale-105 ${
+              loading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-800"
+            }`}
+          >
+            {loading ? "Processing..." : isLogin ? "Login" : "Sign Up"}
+          </button>
+        </form>
 
         <p className="text-center mt-4 text-gray-600">
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
-           
+            onClick={() => setIsLogin(!isLogin)}
             className="text-yellow-500 font-semibold transition-colors duration-300 hover:text-gray-800"
           >
             {isLogin ? "Sign Up" : "Login"}
