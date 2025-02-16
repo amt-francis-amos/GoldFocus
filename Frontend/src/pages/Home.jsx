@@ -33,7 +33,7 @@ const Home = () => {
       animate={{ scale: 1.1 }}
       transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
     >
-      <Link to="" className="mt-6 inline-block bg-yellow-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-yellow-600 transition">
+      <Link to="/login" className="mt-6 inline-block bg-yellow-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-yellow-600 transition">
         Access Vault Login
       </Link>
     </motion.div>
