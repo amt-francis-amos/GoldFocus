@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+
 import { FiUser, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,23 +8,11 @@ const Login = () => {
   const [accountID, setAccountID] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
 
 
-  const validCredentials = {
-    accountID: "admin",
-    password: "password123",
-  };
 
-  const handleLogin = () => {
-    if (accountID === validCredentials.accountID && password === validCredentials.password) {
-      localStorage.setItem("isAuthenticated", "true");
-      toast.success("Login successful!", { position: "top-center" });
-      setTimeout(() => navigate("/home"), 1000); 
-    } else {
-      toast.error("Invalid credentials. Please try again.", { position: "top-center" });
-    }
-  };
+
+  
 
   return (
     <div className="h-screen flex justify-center items-center bg-gray-100">
