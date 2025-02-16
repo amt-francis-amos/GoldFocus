@@ -13,7 +13,7 @@ const Stats = () => {
     <div className="flex flex-wrap justify-center gap-8 p-8  text-center">
       {stats.map((stat, index) => (
         <div key={index} className="bg-white shadow-md p-6 rounded-lg w-48">
-          <h3 className="text-3xl font-bold text-blue-600">
+          <h3 className="text-2xl md:text-6xl font-bold text-blue-600">
             <CountUp end={stat.value} duration={3} suffix={stat.suffix || ""} />
           </h3>
           <p className="text-gray-700 mt-2">{stat.label}</p>
