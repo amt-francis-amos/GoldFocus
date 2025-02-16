@@ -8,36 +8,38 @@ const Home = () => {
   return (
     <div className="bg-gray-100 text-gray-900">
      
-      <motion.section 
-       className="relative bg-cover bg-center min-h-screen flex items-center text-center"
+     <motion.section 
+  className="relative bg-cover bg-center min-h-screen flex items-center text-center"
+  style={{ backgroundImage: `url(${assets.heroImg})` }}
+  initial={{ opacity: 0, y: 50 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 1 }}
+>
+ 
 
-        style={{ backgroundImage: `url(${assets.heroImg})` }}
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-      >
-        <div className="container mx-auto px-6">
-          <h2 className="text-white text-2xl ">15+ Years of Experience</h2>
-          <motion.h1 
-            className="text-2xl md:text-5xl font-bold text-white"
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1 }}
-          >
-            Secure Your Future with <span className="text-yellow-500">Gold Investments</span>
-          </motion.h1>
-          <p className="text-lg text-white mt-4">Trusted & transparent gold trading for a brighter tomorrow.</p>
-          <motion.div 
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1.1 }}
-            transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
-          >
-            <Link to="" className="mt-6 inline-block bg-yellow-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-yellow-600 transition">
-              Access Vault Login
-            </Link>
-          </motion.div>
-        </div>
-      </motion.section>
+  <div className="container mx-auto px-6 relative z-10">
+    <h2 className="text-white text-2xl">15+ Years of Experience</h2>
+    <motion.h1 
+      className="text-2xl md:text-5xl font-bold text-white"
+      initial={{ scale: 0.8 }}
+      animate={{ scale: 1 }}
+      transition={{ duration: 1 }}
+    >
+      Secure Your Future with <span className="text-yellow-500">Gold Investments</span>
+    </motion.h1>
+    <p className="text-lg text-white mt-4">Trusted & transparent gold trading for a brighter tomorrow.</p>
+    <motion.div 
+      initial={{ scale: 0.8 }}
+      animate={{ scale: 1.1 }}
+      transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
+    >
+      <Link to="" className="mt-6 inline-block bg-yellow-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-yellow-600 transition">
+        Access Vault Login
+      </Link>
+    </motion.div>
+  </div>
+</motion.section>
+
 
    
       <section className="py-16 bg-gray-100">
