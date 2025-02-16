@@ -22,9 +22,7 @@ const Login = () => {
     const url = isLogin
       ? "http://localhost:5000/api/users/login"
       : "http://localhost:5000/api/users/register";
-    const payload = isLogin
-      ? { email, password }
-      : { accountID, email, password };
+    const payload = isLogin ? { email, password } : { accountID, email, password };
   
     try {
       const response = await axios.post(url, payload, {
@@ -34,9 +32,9 @@ const Login = () => {
       toast.success(response.data.message);
   
       if (isLogin) {
-       
         localStorage.setItem("user", "true");
         localStorage.setItem("token", response.data.token);
+        window.dispatchEvent(new Event("storage")); 
         setTimeout(() => navigate("/"), 2000);
       } else {
         setTimeout(() => {
@@ -50,6 +48,7 @@ const Login = () => {
       setLoading(false);
     }
   };
+  
   
 
   return (

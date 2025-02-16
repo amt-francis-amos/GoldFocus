@@ -5,20 +5,26 @@ import { assets } from "../assets/assets";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem("user") === "true"
+  );
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is logged in
-    const user = localStorage.getItem("user");
-    setIsAuthenticated(user === "true"); // Ensure it's a boolean value
+    const handleStorageChange = () => {
+      setIsAuthenticated(localStorage.getItem("user") === "true");
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user"); // Clear session
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setIsAuthenticated(false);
-    navigate("/"); // Redirect to home
+    navigate("/");
   };
 
   return (
@@ -36,10 +42,14 @@ const Navbar = () => {
               <Link
                 to={path}
                 className={`${
-                  location.pathname === path ? "font-bold underline text-gray-900" : "hover:text-gray-700"
+                  location.pathname === path
+                    ? "font-bold underline text-gray-900"
+                    : "hover:text-gray-700"
                 }`}
               >
-                {path === "/" ? "Home" : path.slice(1).charAt(0).toUpperCase() + path.slice(2)}
+                {path === "/"
+                  ? "Home"
+                  : path.slice(1).charAt(0).toUpperCase() + path.slice(2)}
               </Link>
             </li>
           ))}
@@ -63,7 +73,10 @@ const Navbar = () => {
         )}
 
         {/* Mobile Menu Toggle */}
-        <button className="md:hidden text-black" onClick={() => setIsOpen(!isOpen)}>
+        <button
+          className="md:hidden text-black"
+          onClick={() => setIsOpen(!isOpen)}
+        >
           {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
         </button>
       </div>
@@ -77,11 +90,15 @@ const Navbar = () => {
                 <Link
                   to={path}
                   className={`${
-                    location.pathname === path ? "font-bold underline text-gray-900" : "text-black"
+                    location.pathname === path
+                      ? "font-bold underline text-gray-900"
+                      : "text-black"
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
-                  {path === "/" ? "Home" : path.slice(1).charAt(0).toUpperCase() + path.slice(2)}
+                  {path === "/"
+                    ? "Home"
+                    : path.slice(1).charAt(0).toUpperCase() + path.slice(2)}
                 </Link>
               </li>
             ))}
@@ -97,7 +114,11 @@ const Navbar = () => {
                 Logout
               </button>
             ) : (
-              <Link to="/login" className="bg-black text-white px-8 py-2 rounded" onClick={() => setIsOpen(false)}>
+              <Link
+                to="/login"
+                className="bg-black text-white px-8 py-2 rounded"
+                onClick={() => setIsOpen(false)}
+              >
                 Login
               </Link>
             )}
