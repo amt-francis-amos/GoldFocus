@@ -12,7 +12,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="text-black font-bold text-2xl">
-          <img className="w-20" src={assets.goldLogo} alt="Logo" />
+          <img className="w-15" src={assets.goldLogo} alt="Logo" />
         </Link>
 
         {/* Desktop Menu */}

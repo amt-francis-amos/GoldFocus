@@ -4,12 +4,12 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { assets } from "../assets/assets";
 
-const Login= () => {
+const Login = () => {
   const [accountID, setAccountID] = useState("");
-  const [email, setEmail] = useState(""); 
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLogin, setIsLogin] = useState(true); 
+  const [isLogin, setIsLogin] = useState(true);
 
   const handleLogin = () => {
     toast.success("Login Successful");
@@ -20,35 +20,37 @@ const Login= () => {
   };
 
   return (
-    <div className="h-screen flex justify-center mt-30 items-center bg-gray-100">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
       <ToastContainer />
-      
-      <div className="bg-white p-8 rounded-lg  shadow-lg w-96">
-        <img src={assets.goldLogo} className="w-20 mx-auto mb-5" alt="Logo" />
 
-        <h2 className="text-xl font-semibold text-center mb-4">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full transform transition-all duration-300 ease-in-out">
+        <img
+          src={assets.goldLogo}
+          className="w-20 mx-auto mb-5 transition-transform duration-300 hover:scale-105"
+          alt="Logo"
+        />
+
+        <h2 className="text-xl font-semibold text-center mb-4 transition-opacity duration-300">
           {isLogin ? "Login" : "Sign Up"}
         </h2>
 
-        {!isLogin && (
-          <div className="mb-4">
-            <label className="block text-gray-600">Email</label>
-            <div className="flex items-center border border-gray-300 p-2 rounded">
-              <FiMail className="text-gray-500 mr-2" />
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full outline-none"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+        <div className={`transition-opacity duration-300 ${isLogin ? "opacity-0 h-0 overflow-hidden" : "opacity-100 h-auto mb-4"}`}>
+          <label className="block text-gray-600">Email</label>
+          <div className="flex items-center border border-gray-300 p-2 rounded transition-all duration-300 focus-within:border-yellow-500">
+            <FiMail className="text-gray-500 mr-2" />
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="w-full outline-none"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
-        )}
+        </div>
 
         <div className="mb-4">
           <label className="block text-gray-600">Account ID</label>
-          <div className="flex items-center border border-gray-300 p-2 rounded">
+          <div className="flex items-center border border-gray-300 p-2 rounded transition-all duration-300 focus-within:border-yellow-500">
             <FiUser className="text-gray-500 mr-2" />
             <input
               type="number"
@@ -62,7 +64,7 @@ const Login= () => {
 
         <div className="mb-4">
           <label className="block text-gray-600">Password</label>
-          <div className="flex items-center border border-gray-300 p-2 rounded">
+          <div className="flex items-center border border-gray-300 p-2 rounded transition-all duration-300 focus-within:border-yellow-500">
             <FiLock className="text-gray-500 mr-2" />
             <input
               type={showPassword ? "text" : "password"}
@@ -74,7 +76,7 @@ const Login= () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-500"
+              className="text-gray-500 transition-transform duration-300 hover:scale-110"
             >
               {showPassword ? <FiEyeOff /> : <FiEye />}
             </button>
@@ -83,7 +85,7 @@ const Login= () => {
 
         <button
           onClick={isLogin ? handleLogin : handleSignup}
-          className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-gray-800 transition"
+          className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-gray-800 transition-all duration-300 hover:scale-105"
         >
           {isLogin ? "Login" : "Sign Up"}
         </button>
@@ -92,7 +94,7 @@ const Login= () => {
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
             onClick={() => setIsLogin(!isLogin)}
-            className="text-yellow-500 font-semibold"
+            className="text-yellow-500 font-semibold transition-colors duration-300 hover:text-gray-800"
           >
             {isLogin ? "Sign Up" : "Login"}
           </button>
