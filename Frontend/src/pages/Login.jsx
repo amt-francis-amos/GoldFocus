@@ -13,15 +13,15 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
   
     const url = isLogin
-      ? "http://localhost:5000/api/users/login"
-      : "http://localhost:5000/api/users/register";
+      ? "https://goldfocus-backend.onrender.com/api/users/login"
+      : "https://goldfocus-backend.onrender.com/api/users/register";
     const payload = isLogin ? { email, password } : { accountID, email, password };
   
     try {
