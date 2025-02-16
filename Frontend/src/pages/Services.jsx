@@ -31,7 +31,7 @@ const Services = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          <h1 className="text-4xl lg:text-6xl font-bold text-yellow-600">
+          <h1 className="text-4xl lg:text-5xl font-bold text-yellow-600">
             Our Services
           </h1>
           <p className="mt-4 text-lg text-gray-700">
