@@ -17,6 +17,7 @@ const Home = () => {
         transition={{ duration: 1 }}
       >
         <div className="container mx-auto px-6">
+          <h2 className="text-white text-2xl ">15+ Years of Experience</h2>
           <motion.h1 
             className="text-2xl md:text-5xl font-bold text-white"
             initial={{ scale: 0.8 }}
