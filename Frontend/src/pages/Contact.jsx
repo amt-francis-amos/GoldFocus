@@ -32,7 +32,7 @@ const Contact = () => {
         </motion.div>
 
         <motion.div
-          className="mt-12 grid md:grid-cols-2 gap-10 items-center"
+          className="mt-12 grid md:grid-cols-2 gap-10"
           initial="hidden"
           animate="visible"
           variants={{
@@ -44,7 +44,7 @@ const Contact = () => {
             },
           }}
         >
-          <motion.div className="space-y-6">
+          <motion.div className="space-y-6 bg-white shadow-md p-10">
             {[
               {
                 icon: <FaMapMarkerAlt className="text-yellow-600 text-2xl" />,
