@@ -1,30 +1,28 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
-import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 // Register User
 export const registerUser = async (req, res) => {
-  const { accountID, email, password } = req.body;
-
-  if (!accountID || !email || !password) {
-    return res.status(400).json({ success: false, message: "All fields are required" });
-  }
-
   try {
+    const { accountID, email, password } = req.body;
+
+    if (!accountID || !email || !password) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(409).json({ success: false, message: "User already exists" });
     }
 
-    const accountID = uuidv4();
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
-      accountID,
+      accountID,  // Using the accountID provided in req.body
       email,
       password: hashedPassword,
     });
@@ -44,7 +42,7 @@ export const registerUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Registration error:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
@@ -54,21 +52,27 @@ export const loginUser = async (req, res) => {
   console.log("Login request received:", req.body);
 
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
+    const user = await User.findOne({ email });
     if (!user) {
-      console.log("User not found:", req.body.email);
+      console.log("User not found:", email);
       return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
-    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      console.log("Incorrect password for user:", req.body.email);
+      console.log("Incorrect password for user:", email);
       return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    console.log("Login successful for:", req.body.email);
+    console.log("Login successful for:", email);
     res.status(200).json({
       success: true,
       message: "User logged in successfully",
