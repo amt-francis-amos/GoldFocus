@@ -24,8 +24,8 @@ const Login = () => {
       : "https://goldfocus-backend.onrender.com/api/users/register";
     
     const payload = isLogin
-      ? { accountID, password }  // Login with accountID and password
-      : { email, password };      // Signup with email and password
+      ? { accountID, password } 
+      : { email, password };      
 
     try {
       const response = await axios.post(url, payload, {
@@ -64,7 +64,7 @@ const Login = () => {
 
         <form onSubmit={handleSubmit}>
           {!isLogin ? (
-            // Signup Form (Email & Password only)
+           
             <>
               <div className="mb-4">
                 <label className="block text-gray-600">Email</label>
@@ -81,7 +81,7 @@ const Login = () => {
               </div>
             </>
           ) : (
-            // Login Form (AccountID & Password)
+         
             <>
               <div className="mb-4">
                 <label className="block text-gray-600">Account ID</label>
