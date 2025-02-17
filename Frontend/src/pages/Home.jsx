@@ -16,6 +16,7 @@ const Home = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
       >
+         <div className="absolute inset-0 bg-black opacity-40"></div>
         <div className="container mx-auto px-6 relative z-10">
           <h2 className="text-white text-2xl">15+ Years of Experience</h2>
           <motion.h1 
