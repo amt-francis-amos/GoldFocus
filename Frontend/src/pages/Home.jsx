@@ -8,7 +8,7 @@ import Stats from "../components/Stats";
 const Home = () => {
   return (
     <div className="bg-gray-100 text-gray-900">
-      {/* Hero Section */}
+    
       <motion.section 
         className="relative bg-cover bg-center min-h-screen flex items-center text-center"
         style={{ backgroundImage: `url(${assets.heroImg})` }}
@@ -39,7 +39,7 @@ const Home = () => {
         </div>
       </motion.section>
 
-      {/* Services Section */}
+    
       <section className="py-16 bg-gray-100">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold text-gray-800">Our Services</h2>
@@ -74,12 +74,12 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
+   
       <section className="py-16 bg-gray-900">
         <Stats />
       </section>
 
-      {/* Testimonials Section */}
+     
       <section className="py-16 bg-white">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold text-gray-800">What Our Clients Say</h2>
@@ -117,7 +117,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+    
       <motion.section 
         className="py-16 bg-gray-600 text-white"
         initial={{ opacity: 0 }}
