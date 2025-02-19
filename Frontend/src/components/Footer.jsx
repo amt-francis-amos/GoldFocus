@@ -11,7 +11,7 @@ const Footer = () => {
     <footer className="bg-gray-900 text-white py-20">
       <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
-          <h2 className="text-2xl font-bold">Gold Limited</h2>
+          <h2 className="text-2xl font-bold">Imperial Gold Security</h2>
           <p className="text-gray-400 mt-2">
             Your trusted partner in gold trading and investment. Secure,
             reliable, and transparent services.
@@ -67,7 +67,7 @@ const Footer = () => {
 
       <div className="border-t border-gray-700 mt-6 pt-6 flex flex-col md:flex-row items-center justify-between px-6">
         <p className="text-gray-400">
-          &copy; {new Date().getFullYear()} Gold Limited. All rights reserved.
+          &copy; {new Date().getFullYear()} Imperial Gold Security. All rights reserved.
         </p>
         <div className="flex space-x-4 mt-4 md:mt-0">
           <a href="#" className="text-gray-400 hover:text-white">
