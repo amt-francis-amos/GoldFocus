@@ -30,12 +30,12 @@ const Navbar = () => {
   return (
     <nav className="bg-white h-[88px] shadow-md fixed w-full top-0 left-0 z-50 flex items-center">
       <div className="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
-        {/* Logo */}
+       
         <Link to="/" className="text-black font-bold text-2xl flex items-center">
           <img className="w-[200px]" src={assets.goldLogo} alt="Logo" />
         </Link>
 
-        {/* Desktop Menu */}
+      
         <ul className="hidden md:flex space-x-6 text-black font-medium items-center">
           <li className={`relative group ${location.pathname === "/" ? "font-bold text-gray-900" : "hover:text-gray-700"}`}>
             <Link to="/">Home</Link>
@@ -51,7 +51,7 @@ const Navbar = () => {
           </li>
         </ul>
 
-        {/* Auth Buttons - Desktop */}
+      
         {isAuthenticated ? (
           <button
             onClick={handleLogout}
@@ -74,7 +74,7 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+    
       {isOpen && (
         <div className="md:hidden bg-[#FFD700] py-4 absolute top-[88px] left-0 w-full shadow-md">
           <ul className="flex flex-col items-center space-y-4">
