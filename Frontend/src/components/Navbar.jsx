@@ -32,7 +32,7 @@ const Navbar = () => {
       <div className="container mx-auto px-6 w-full flex justify-between items-center">
        
         <Link to="/" className="text-black font-bold text-2xl flex items-center">
-        <img className="w-[150px] md:w-[200px] lg:w-[250px]" src={assets.goldLogo} alt="Logo" />
+        <img className="w-[100px] md:w-[140px] lg:w-[120px]" src={assets.goldLogo} alt="Logo" />
 
         </Link>
 
