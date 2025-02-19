@@ -48,17 +48,17 @@ const Contact = () => {
             {[
               {
                 icon: <FaMapMarkerAlt className="text-yellow-600 text-2xl" />,
-                text: "123 Gold Street, Accra, Ghana",
+                text: "Floor 16, Centre City Tower, 7 Hill St, Birmingham B5 4UA, United Kingdom",
                 label: "Address",
               },
               {
                 icon: <FaPhoneAlt className="text-yellow-600 text-2xl" />,
-                text: "+233 123 456 789",
+                text: "+447822031221",
                 label: "Phone",
               },
               {
                 icon: <FaEnvelope className="text-yellow-600 text-2xl" />,
-                text: "contact@yourgoldbusiness.com",
+                text: "Imperial.G.Sec@email.com",
                 label: "Email",
               },
             ].map((item, index) => (
