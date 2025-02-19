@@ -78,7 +78,7 @@ const About = () => {
               className="mt-4 text-gray-700 leading-relaxed"
             >
               At{" "}
-              <span className="text-yellow-600 font-semibold">GoldCorp</span>,
+              <span className="text-yellow-600 font-semibold">Imperial Gold Security</span>,
               we provide premium gold products with a commitment to quality,
               transparency, and integrity. Our gold is 100% authentic and
               certified, ensuring the highest industry standards.

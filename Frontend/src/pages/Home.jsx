@@ -87,7 +87,7 @@ const Home = () => {
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
               { 
-                text: `"Gold Limited has helped me grow my investment portfolio significantly. Highly recommended!"`, 
+                text: `"Imperial Gold Security has helped me grow my investment portfolio significantly. Highly recommended!"`, 
                 name: "James K.",
                 image: "https://randomuser.me/api/portraits/men/32.jpg" 
               },

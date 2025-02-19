@@ -28,11 +28,12 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white h-[88px] shadow-md fixed w-full top-0 left-0 z-50 flex items-center">
-      <div className="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
+    <nav className="bg-white h-[96px] shadow-md fixed w-full top-0 left-0 z-50 flex items-center">
+      <div className="container mx-auto px-6 w-full flex justify-between items-center">
        
         <Link to="/" className="text-black font-bold text-2xl flex items-center">
-          <img className="w-[200px]" src={assets.goldLogo} alt="Logo" />
+        <img className="w-[150px] md:w-[200px] lg:w-[250px]" src={assets.goldLogo} alt="Logo" />
+
         </Link>
 
       
@@ -68,7 +69,7 @@ const Navbar = () => {
           </Link>
         )}
 
-        {/* Mobile Menu Button */}
+       
         <button className="md:hidden text-black" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
         </button>
