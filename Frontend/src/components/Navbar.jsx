@@ -28,32 +28,30 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-[#FFD700] shadow-md fixed w-full top-0 left-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-       
-        <Link to="/" className="text-black font-bold text-2xl">
-          <img className="w-15" src={assets.goldLogo} alt="Logo" />
+    <nav className="bg-white h-[88px] shadow-md fixed w-full top-0 left-0 z-50 flex items-center">
+      <div className="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
+        {/* Logo */}
+        <Link to="/" className="text-black font-bold text-2xl flex items-center">
+          <img className="w-[200px]" src={assets.goldLogo} alt="Logo" />
         </Link>
 
-       
-        <ul className="hidden md:flex space-x-6 text-black font-medium">
-  {["/", "/about", "/services", "/contact"].map((path, index) => (
-    <li key={index} className="relative group">
-      <Link
-        to={path}
-        className={`relative pb-2 transition duration-300 ${
-          location.pathname === path ? "font-bold text-gray-900" : "hover:text-gray-700"
-        }`}
-      >
-        {path === "/" ? "Home" : path.slice(1).charAt(0).toUpperCase() + path.slice(2)}
-        <span className="absolute left-1/2 bottom-0 w-0 h-[2px] bg-gray-900 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
-      </Link>
-    </li>
-  ))}
-</ul>
+        {/* Desktop Menu */}
+        <ul className="hidden md:flex space-x-6 text-black font-medium items-center">
+          <li className={`relative group ${location.pathname === "/" ? "font-bold text-gray-900" : "hover:text-gray-700"}`}>
+            <Link to="/">Home</Link>
+          </li>
+          <li className={`relative group ${location.pathname === "/about" ? "font-bold text-gray-900" : "hover:text-gray-700"}`}>
+            <Link to="/about">About</Link>
+          </li>
+          <li className={`relative group ${location.pathname === "/services" ? "font-bold text-gray-900" : "hover:text-gray-700"}`}>
+            <Link to="/services">Services</Link>
+          </li>
+          <li className={`relative group ${location.pathname === "/contact" ? "font-bold text-gray-900" : "hover:text-gray-700"}`}>
+            <Link to="/contact">Contact</Link>
+          </li>
+        </ul>
 
-
-     
+        {/* Auth Buttons - Desktop */}
         {isAuthenticated ? (
           <button
             onClick={handleLogout}
@@ -70,36 +68,36 @@ const Navbar = () => {
           </Link>
         )}
 
-        <button
-          className="md:hidden text-black"
-          onClick={() => setIsOpen(!isOpen)}
-        >
+        {/* Mobile Menu Button */}
+        <button className="md:hidden text-black" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
         </button>
       </div>
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-[#FFD700] py-4">
+        <div className="md:hidden bg-[#FFD700] py-4 absolute top-[88px] left-0 w-full shadow-md">
           <ul className="flex flex-col items-center space-y-4">
-            {["/", "/about", "/services", "/contact"].map((path, index) => (
-              <li key={index}>
-                <Link
-                  to={path}
-                  className={`${
-                    location.pathname === path
-                      ? "font-bold underline text-gray-900"
-                      : "text-black"
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {path === "/"
-                    ? "Home"
-                    : path.slice(1).charAt(0).toUpperCase() + path.slice(2)}
-                </Link>
-              </li>
-            ))}
-
+            <li>
+              <Link to="/" className={`text-black ${location.pathname === "/" ? "font-bold underline" : ""}`} onClick={() => setIsOpen(false)}>
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/about" className={`text-black ${location.pathname === "/about" ? "font-bold underline" : ""}`} onClick={() => setIsOpen(false)}>
+                About
+              </Link>
+            </li>
+            <li>
+              <Link to="/services" className={`text-black ${location.pathname === "/services" ? "font-bold underline" : ""}`} onClick={() => setIsOpen(false)}>
+                Services
+              </Link>
+            </li>
+            <li>
+              <Link to="/contact" className={`text-black ${location.pathname === "/contact" ? "font-bold underline" : ""}`} onClick={() => setIsOpen(false)}>
+                Contact
+              </Link>
+            </li>
             {isAuthenticated ? (
               <button
                 onClick={() => {
@@ -111,11 +109,7 @@ const Navbar = () => {
                 Logout
               </button>
             ) : (
-              <Link
-                to="/login"
-                className="bg-black text-white px-8 py-2 rounded"
-                onClick={() => setIsOpen(false)}
-              >
+              <Link to="/login" className="bg-black text-white px-8 py-2 rounded" onClick={() => setIsOpen(false)}>
                 Login
               </Link>
             )}
