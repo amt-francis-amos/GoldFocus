@@ -32,27 +32,33 @@ const Navbar = () => {
       <div className="container mx-auto px-6 w-full flex justify-between items-center">
        
         <Link to="/" className="text-black font-bold text-2xl flex items-center">
-        <img className="w-[100px] md:w-[140px] lg:w-[120px]" src={assets.goldLogo} alt="Logo" />
-
+          <img className="w-[100px] md:w-[140px] lg:w-[120px]" src={assets.goldLogo} alt="Logo" />
         </Link>
 
-      
         <ul className="hidden md:flex space-x-6 text-black font-medium items-center">
-          <li className={`relative group ${location.pathname === "/" ? "font-bold text-gray-900" : "hover:text-gray-700"}`}>
-            <Link to="/">Home</Link>
-          </li>
-          <li className={`relative group ${location.pathname === "/about" ? "font-bold text-gray-900" : "hover:text-gray-700"}`}>
-            <Link to="/about">About</Link>
-          </li>
-          <li className={`relative group ${location.pathname === "/services" ? "font-bold text-gray-900" : "hover:text-gray-700"}`}>
-            <Link to="/services">Services</Link>
-          </li>
-          <li className={`relative group ${location.pathname === "/contact" ? "font-bold text-gray-900" : "hover:text-gray-700"}`}>
-            <Link to="/contact">Contact</Link>
-          </li>
+          {["/", "/about", "/services", "/contact"].map((path, index) => {
+            const labels = ["Home", "About", "Services", "Contact"];
+            const isActive = location.pathname === path;
+            return (
+              <li key={index} className="relative group">
+                <Link 
+                  to={path}
+                  className={`transition-all duration-300 ${
+                    isActive ? "font-bold text-gray-900" : "hover:text-gray-700"
+                  }`}
+                >
+                  {labels[index]}
+                  <span
+                    className={`absolute left-0 bottom-0 w-full h-[2px] bg-[#FFD700] transition-transform duration-300 ${
+                      isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                    }`}
+                  ></span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
 
-      
         {isAuthenticated ? (
           <button
             onClick={handleLogout}
@@ -69,36 +75,29 @@ const Navbar = () => {
           </Link>
         )}
 
-       
         <button className="md:hidden text-black" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
         </button>
       </div>
 
-    
       {isOpen && (
         <div className="md:hidden bg-[#FFD700] py-4 absolute top-[88px] left-0 w-full shadow-md">
           <ul className="flex flex-col items-center space-y-4">
-            <li>
-              <Link to="/" className={`text-black ${location.pathname === "/" ? "font-bold underline" : ""}`} onClick={() => setIsOpen(false)}>
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/about" className={`text-black ${location.pathname === "/about" ? "font-bold underline" : ""}`} onClick={() => setIsOpen(false)}>
-                About
-              </Link>
-            </li>
-            <li>
-              <Link to="/services" className={`text-black ${location.pathname === "/services" ? "font-bold underline" : ""}`} onClick={() => setIsOpen(false)}>
-                Services
-              </Link>
-            </li>
-            <li>
-              <Link to="/contact" className={`text-black ${location.pathname === "/contact" ? "font-bold underline" : ""}`} onClick={() => setIsOpen(false)}>
-                Contact
-              </Link>
-            </li>
+            {["/", "/about", "/services", "/contact"].map((path, index) => {
+              const labels = ["Home", "About", "Services", "Contact"];
+              const isActive = location.pathname === path;
+              return (
+                <li key={index}>
+                  <Link
+                    to={path}
+                    className={`text-black ${isActive ? "font-bold underline" : ""}`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {labels[index]}
+                  </Link>
+                </li>
+              );
+            })}
             {isAuthenticated ? (
               <button
                 onClick={() => {
