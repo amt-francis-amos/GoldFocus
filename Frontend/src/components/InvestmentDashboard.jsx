@@ -20,19 +20,19 @@ const InvestmentDashboard = ({ userId }) => {
     const fetchInvestmentDetails = async () => {
       if (!userId) {
         console.error("User ID is missing. Skipping API call.");
+        return;
+      }
+
+      const token = localStorage.getItem("authToken");
+
+      if (!token) {
+        console.error("Authorization token is missing.");
+        setError("Authentication error: Please log in again.");
         setLoading(false);
         return;
       }
 
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          console.error("Authorization token is missing.");
-          setError("You are not authenticated. Please log in.");
-          setLoading(false);
-          return;
-        }
-
         const response = await axios.get(
           `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
           {
@@ -42,11 +42,8 @@ const InvestmentDashboard = ({ userId }) => {
 
         setInvestment(response.data);
       } catch (error) {
-        console.error(
-          "Error fetching investment details:",
-          error.response?.data || error.message
-        );
-        setError("Failed to load investment data.");
+        console.error("Error fetching investment details:", error);
+        setError("Failed to fetch investment details.");
       } finally {
         setLoading(false);
       }
@@ -63,17 +60,18 @@ const InvestmentDashboard = ({ userId }) => {
       return;
     }
 
-    try {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        setError("Authentication token is missing. Please log in.");
-        return;
-      }
+    const token = localStorage.getItem("authToken");
 
+    if (!token) {
+      setError("Authentication error: Please log in again.");
+      return;
+    }
+
+    try {
       const response = await axios.post(
         "https://goldfocus-backend.onrender.com/api/investments",
         {
-          userId,
+          userId: userId,
           amount: Number(amount),
           investmentDate: new Date().toISOString(),
         },
@@ -86,23 +84,19 @@ const InvestmentDashboard = ({ userId }) => {
       setAmount("");
       setError("");
     } catch (error) {
-      console.error(
-        "Error creating investment:",
-        error.response?.data || error.message
-      );
-      setError(
-        error.response?.data?.message || "Failed to create investment. Try again."
-      );
+      console.error("Error creating investment:", error);
+      setError("Failed to create investment. Try again.");
     }
   };
 
   if (loading) return <p>Loading investment details...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
-  if (!investment) return <p>No investment found.</p>;
+  if (!investment) return <p>{error || "No investment found."}</p>;
 
   return (
     <div className="max-w-3xl mx-auto p-4 bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-semibold mb-4">Investment Dashboard</h2>
+
+      {error && <p className="text-red-500 text-sm">{error}</p>}
 
       {/* Investment Details */}
       <div className="mb-4 p-4 bg-gray-100 rounded-lg">
