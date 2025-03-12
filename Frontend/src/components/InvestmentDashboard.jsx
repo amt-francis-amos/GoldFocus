@@ -18,16 +18,18 @@ const InvestmentDashboard = ({ userId }) => {
     const fetchInvestmentDetails = async () => {
       if (!userId) {
         console.error("User ID is missing. Skipping API call.");
-        return; 
+        return;
       }
   
       try {
         const response = await axios.get(
           `https://goldfocus-backend.onrender.com/api/investments/${userId}`
         );
-        setInvestmentDetails(response.data);
+        setInvestment(response.data);
       } catch (error) {
         console.error("Error fetching investment details:", error);
+      } finally {
+        setLoading(false);
       }
     };
   
