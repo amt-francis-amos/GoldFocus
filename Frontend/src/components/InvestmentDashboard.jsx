@@ -18,32 +18,45 @@ const InvestmentDashboard = ({ userId }) => {
 
   useEffect(() => {
     const fetchInvestmentDetails = async () => {
-  if (!userId) {
-    console.error("User ID is missing. Skipping API call.");
-    return;
-  }
-
-  try {
-    const token = localStorage.getItem("authToken"); 
-    const response = await axios.get(
-      `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` }, 
+      if (!userId) {
+        console.error("User ID is missing. Skipping API call.");
+        setLoading(false);
+        return;
       }
-    );
 
-    setInvestment(response.data);
-  } catch (error) {
-    console.error("Error fetching investment details:", error);
-  }
-};
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          console.error("Authorization token is missing.");
+          setError("You are not authenticated. Please log in.");
+          setLoading(false);
+          return;
+        }
 
+        const response = await axios.get(
+          `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        setInvestment(response.data);
+      } catch (error) {
+        console.error(
+          "Error fetching investment details:",
+          error.response?.data || error.message
+        );
+        setError("Failed to load investment data.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchInvestmentDetails();
   }, [userId]);
 
   const createInvestment = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
       setError("Please enter a valid investment amount.");
@@ -51,25 +64,40 @@ const InvestmentDashboard = ({ userId }) => {
     }
 
     try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        setError("Authentication token is missing. Please log in.");
+        return;
+      }
+
       const response = await axios.post(
         "https://goldfocus-backend.onrender.com/api/investments",
         {
-          userId: userId,
+          userId,
           amount: Number(amount),
           investmentDate: new Date().toISOString(),
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      setInvestment(response.data); 
-      setAmount(""); 
+      setInvestment(response.data);
+      setAmount("");
       setError("");
     } catch (error) {
-      console.error("Error creating investment:", error);
-      setError("Failed to create investment. Try again.");
+      console.error(
+        "Error creating investment:",
+        error.response?.data || error.message
+      );
+      setError(
+        error.response?.data?.message || "Failed to create investment. Try again."
+      );
     }
   };
 
   if (loading) return <p>Loading investment details...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
   if (!investment) return <p>No investment found.</p>;
 
   return (
@@ -78,7 +106,9 @@ const InvestmentDashboard = ({ userId }) => {
 
       {/* Investment Details */}
       <div className="mb-4 p-4 bg-gray-100 rounded-lg">
-        <p className="text-lg font-semibold">Total Investment: ${investment.amount}</p>
+        <p className="text-lg font-semibold">
+          Total Investment: ${investment.amount}
+        </p>
         <p className="text-sm text-gray-600">
           Investment Date: {new Date(investment.investmentDate).toLocaleDateString()}
         </p>
@@ -107,7 +137,7 @@ const InvestmentDashboard = ({ userId }) => {
         </LineChart>
       </ResponsiveContainer>
 
-      {/* 🟢 Add New Investment Form */}
+      {/* Add New Investment Form */}
       <div className="mt-6 p-4 bg-gray-100 rounded-lg">
         <h3 className="text-lg font-semibold mb-2">Add Investment</h3>
         <form onSubmit={createInvestment} className="flex flex-col space-y-3">
