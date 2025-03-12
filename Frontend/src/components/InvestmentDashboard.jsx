@@ -24,11 +24,11 @@ const InvestmentDashboard = ({ userId }) => {
       }
     
       try {
-        const token = localStorage.getItem("authToken"); // 🔹 Retrieve JWT token
+        const token = localStorage.getItem("authToken"); 
         const response = await axios.get(
           `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
           {
-            headers: { Authorization: `Bearer ${token}` }, // 🔹 Add Authorization header
+            headers: { Authorization: `Bearer ${token}` }, // 🔹 
           }
         );
     
