@@ -27,8 +27,6 @@ const InvestmentDashboard = () => {
     const fetchInvestmentDetails = async () => {
       try {
         const token = localStorage.getItem("authToken");
-        if (!token) throw new Error("Authentication token is missing.");
-
         const response = await axios.get(
           `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -36,7 +34,6 @@ const InvestmentDashboard = () => {
         setInvestment(response.data);
       } catch (error) {
         console.error("Error fetching investment details:", error);
-        setError("Failed to load investment data. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -54,17 +51,13 @@ const InvestmentDashboard = () => {
     }
 
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) throw new Error("Authentication token is missing.");
-
       const response = await axios.post(
         "https://goldfocus-backend.onrender.com/api/investments",
         {
           userId: userId,
           amount: Number(amount),
           investmentDate: new Date().toISOString(),
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
+        }
       );
 
       setInvestment(response.data);
@@ -72,7 +65,7 @@ const InvestmentDashboard = () => {
       setError("");
     } catch (error) {
       console.error("Error creating investment:", error);
-      setError("Failed to create investment. Please try again.");
+      setError("Failed to create investment. Try again.");
     }
   };
 
@@ -102,7 +95,7 @@ const InvestmentDashboard = () => {
       {/* Investment Growth Chart */}
       <h3 className="text-lg font-semibold mb-2">Investment Growth</h3>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={investment.growthData || []}>
+        <LineChart data={investment.growthData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="date"
