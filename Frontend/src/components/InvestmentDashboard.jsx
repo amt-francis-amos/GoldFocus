@@ -41,6 +41,8 @@ const InvestmentDashboard = ({ userId }) => {
           }
         );
         setInvestment(response.data);
+        console.log("Fetching investment details for userId:", userId);
+
       } catch (error) {
         console.error("Error fetching investment details:", error);
         if (error.response && error.response.status === 404) {
