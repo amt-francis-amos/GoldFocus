@@ -18,26 +18,26 @@ const InvestmentDashboard = ({ userId }) => {
 
   useEffect(() => {
     const fetchInvestmentDetails = async () => {
-      if (!userId) {
-        console.error("User ID is missing. Skipping API call.");
-        return;
+  if (!userId) {
+    console.error("User ID is missing. Skipping API call.");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("authToken"); 
+    const response = await axios.get(
+      `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` }, 
       }
-    
-      try {
-        const token = localStorage.getItem("authToken"); 
-        const response = await axios.get(
-          `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` }, // 🔹 
-          }
-        );
-    
-        setInvestment(response.data);
-      } catch (error) {
-        console.error("Error fetching investment details:", error);
-      }
-    };
-    
+    );
+
+    setInvestment(response.data);
+  } catch (error) {
+    console.error("Error fetching investment details:", error);
+  }
+};
+
 
     fetchInvestmentDetails();
   }, [userId]);
