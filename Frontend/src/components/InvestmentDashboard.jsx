@@ -71,6 +71,45 @@ const InvestmentDashboard = ({ userId }) => {
     }
   };
 
+  // Function to put an investment on hold
+  const handleHoldInvestment = async (investmentId) => {
+    const holdReason = prompt("Enter a reason for holding this investment:");
+
+    if (!holdReason) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Authentication error. Please log in.");
+
+      const response = await fetch(
+        `https://goldfocus-backend.onrender.com/api/investments/${investmentId}/hold`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ holdReason }),
+        }
+      );
+
+      if (response.ok) {
+        alert("Investment put on hold successfully.");
+        // Update investment status locally
+        setInvestments((prevInvestments) =>
+          prevInvestments.map((inv) =>
+            inv._id === investmentId ? { ...inv, status: "On Hold", holdReason } : inv
+          )
+        );
+      } else {
+        const data = await response.json();
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Error holding investment:", error);
+    }
+  };
+
   const combinedGrowthData = investments.flatMap((investment) =>
     investment?.growthData?.map((data) => ({
       date: new Date(data.date).toLocaleDateString(),
@@ -93,6 +132,14 @@ const InvestmentDashboard = ({ userId }) => {
             <p className="text-lg font-semibold">Total Investments: ${investments[0].amount}</p>
             <p>Status: {investments[0].status}</p>
             <p>Hold Reason: {investments[0].holdReason || "None"}</p>
+            {investments[0].status !== "On Hold" && (
+              <button
+                onClick={() => handleHoldInvestment(investments[0]._id)}
+                className="bg-red-500 text-white p-2 rounded mt-4"
+              >
+                Hold Investment
+              </button>
+            )}
           </div>
 
           <h3 className="text-lg font-semibold mb-4">Investment Growth</h3>
@@ -114,8 +161,19 @@ const InvestmentDashboard = ({ userId }) => {
 
       <form onSubmit={handleInvestment} className="mt-8 p-6 bg-gray-100 rounded-lg">
         <h3 className="text-lg font-semibold mb-4 text-center">Add Investment</h3>
-        <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} className="p-3 border rounded-md w-full" placeholder="Enter investment amount" />
-        <button type="submit" className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-md w-full mt-4">Invest Now</button>
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="p-3 border rounded-md w-full"
+          placeholder="Enter investment amount"
+        />
+        <button
+          type="submit"
+          className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-md w-full mt-4"
+        >
+          Invest Now
+        </button>
       </form>
     </div>
   );

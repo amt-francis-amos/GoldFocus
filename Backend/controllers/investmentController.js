@@ -10,7 +10,7 @@ export const createInvestment = async (req, res) => {
     const { userId, amount, investmentDate, status, holdReason } = req.body;
 
     if (!userId || !amount) {
-      return res.status(400).json({ message: "User ID and amount are required." });
+      return res.status(400).json({ message: "Missing required fields: userId and amount." });
     }
 
     let existingInvestment = await Investment.findOne({ userId }).session(session);
@@ -26,12 +26,14 @@ export const createInvestment = async (req, res) => {
       );
 
       const newGrowthData = [];
+
       for (let i = 1; i <= 10; i++) {
         let growthDate = new Date(lastGrowthDate);
         growthDate.setDate(growthDate.getDate() + 30);
 
         if (!existingInvestment.growthData.some((g) => new Date(g.date).getTime() === growthDate.getTime())) {
-          newGrowthData.push({ date: growthDate, value: existingInvestment.amount * (1 + 0.02 * i) });
+          const newValue = existingInvestment.amount * (1 + 0.02 * i);
+          newGrowthData.push({ date: growthDate, value: newValue });
         }
       }
 
@@ -40,33 +42,41 @@ export const createInvestment = async (req, res) => {
 
       await existingInvestment.save({ session });
       await session.commitTransaction();
+      session.endSession();
+
       return res.status(200).json(existingInvestment);
     } else {
       const initialDate = new Date(investmentDate || Date.now());
-      const growthData = Array.from({ length: 10 }, (_, i) => ({
-        date: new Date(initialDate.setDate(initialDate.getDate() + i * 30)),
-        value: amount * (1 + 0.02 * i),
-      }));
+      const growthData = [];
+
+      for (let i = 0; i < 10; i++) {
+        const newDate = new Date(initialDate);
+        newDate.setDate(newDate.getDate() + i * 30);
+        const growthValue = amount * (1 + 0.02 * i);
+        growthData.push({ date: newDate, value: growthValue });
+      }
 
       const newInvestment = new Investment({
         userId,
         amount,
         investmentDate: initialDate,
         growthData,
-        status: status || "Active",
+        status: status || "Active", 
         holdReason: holdReason || "",
       });
 
       const savedInvestment = await newInvestment.save({ session });
       await session.commitTransaction();
+      session.endSession();
+
       return res.status(201).json(savedInvestment);
     }
   } catch (error) {
     await session.abortTransaction();
-    console.error("Error in createInvestment:", error);
-    return res.status(500).json({ message: "Internal server error" });
-  } finally {
     session.endSession();
+
+    console.error("Error creating/updating investment:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -74,11 +84,12 @@ export const createInvestment = async (req, res) => {
 export const getUserInvestments = async (req, res) => {
   try {
     const { userId } = req.params;
+
     if (!userId) {
       return res.status(400).json({ message: "User ID is required." });
     }
 
-    const investment = await Investment.findOne({ userId }).populate("userId", "name email");
+    const investment = await Investment.findOne({ userId });
 
     if (!investment) {
       return res.status(404).json({ message: "No investments found for this user." });
@@ -87,6 +98,32 @@ export const getUserInvestments = async (req, res) => {
     return res.status(200).json(investment);
   } catch (error) {
     console.error("Error fetching user investments:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+export const holdInvestment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { holdReason } = req.body;
+
+    if (!holdReason) {
+      return res.status(400).json({ message: "Hold reason is required." });
+    }
+
+    const investment = await Investment.findById(id);
+    if (!investment) {
+      return res.status(404).json({ message: "Investment not found." });
+    }
+
+    investment.status = "On Hold";
+    investment.holdReason = holdReason;
+
+    await investment.save();
+    return res.status(200).json(investment);
+  } catch (error) {
+    console.error("Error updating investment hold status:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
