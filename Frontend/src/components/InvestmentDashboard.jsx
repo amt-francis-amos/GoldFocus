@@ -49,10 +49,10 @@ const InvestmentDashboard = ({ userId }) => {
       } catch (error) {
         console.error("Error fetching investment details:", error);
         if (error.response) {
-          console.log("Error response data:", error.response.data);
+          console.log("Error response data:", JSON.stringify(error.response.data, null, 2));
           console.log("Error response status:", error.response.status);
         }
-        if (error.response && error.response.status === 404) {
+        if (error.response?.status === 404) {
           setError("No investment found.");
         } else {
           setError(
@@ -84,8 +84,7 @@ const InvestmentDashboard = ({ userId }) => {
 
     try {
       const payload = {
-        userId: userId,
-        amount: Number(amount),
+        amount: Number(amount), // ✅ Removed `userId` if backend uses authentication
         investmentDate: new Date().toISOString(),
       };
       console.log("Sending investment payload:", payload); // Debugging investment payload
@@ -105,7 +104,7 @@ const InvestmentDashboard = ({ userId }) => {
     } catch (error) {
       console.error("Error creating investment:", error);
       if (error.response) {
-        console.log("Error response data:", error.response.data);
+        console.log("Error response data:", JSON.stringify(error.response.data, null, 2));
         console.log("Error response status:", error.response.status);
       }
       setError(
@@ -117,6 +116,10 @@ const InvestmentDashboard = ({ userId }) => {
   if (loading) return <p>Loading investment details...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
+  const chartData = investment?.growthData?.length
+    ? investment.growthData
+    : [{ date: new Date(), value: 0 }]; // ✅ Prevents chart crash if no data
+
   return (
     <div className="max-w-3xl mx-auto p-4 bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-semibold mb-4">Investment Dashboard</h2>
@@ -124,25 +127,25 @@ const InvestmentDashboard = ({ userId }) => {
       {/* Investment Details */}
       <div className="mb-4 p-4 bg-gray-100 rounded-lg">
         <p className="text-lg font-semibold">
-          Total Investment: ${investment.amount}
+          Total Investment: ${investment?.amount || 0}
         </p>
         <p className="text-sm text-gray-600">
-          Investment Date: {new Date(investment.investmentDate).toLocaleDateString()}
+          Investment Date: {investment?.investmentDate ? new Date(investment.investmentDate).toLocaleDateString() : "N/A"}
         </p>
       </div>
 
       {/* "On Hold" Status */}
-      {investment.status === "On Hold" && (
+      {investment?.status === "On Hold" && (
         <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
           <p className="font-semibold">On Hold</p>
-          <p className="text-sm">{investment.holdReason || "Pending approval"}</p>
+          <p className="text-sm">{investment?.holdReason || "Pending approval"}</p>
         </div>
       )}
 
       {/* Investment Growth Chart */}
       <h3 className="text-lg font-semibold mb-2">Investment Growth</h3>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={investment.growthData}>
+        <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="date"
