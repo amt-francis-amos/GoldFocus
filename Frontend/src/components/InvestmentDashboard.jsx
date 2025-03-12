@@ -89,70 +89,63 @@ const InvestmentDashboard = ({ userId }) => {
     }
   };
 
+  if (loading) return <p className="text-center text-lg">Loading...</p>;
+  if (error) return <p className="text-center text-red-500">{error}</p>;
+
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
-      <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
-        Investment Dashboard
-      </h2>
+    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-2xl font-semibold mb-6 text-center">Investment Dashboard</h2>
 
-      {loading ? (
-        <p className="text-gray-700 text-center">Loading...</p>
-      ) : error ? (
-        <p className="text-red-500 text-center">{error}</p>
-      ) : (
+      {investment ? (
         <>
-          {investment ? (
-            <div className="p-6 bg-gray-50 shadow-sm rounded-lg mb-6">
-              <h3 className="text-xl font-semibold text-gray-700">
-                Total Investment: <span className="text-green-600">${investment.amount}</span>
-              </h3>
-              <p className="text-sm text-gray-500">
-                Date: {new Date(investment.investmentDate).toLocaleDateString()}
-              </p>
-            </div>
-          ) : (
-            <p className="text-gray-500 text-center">No investment found. Create one below.</p>
-          )}
+          <div className="p-4 bg-gray-100 rounded-lg mb-6">
+            <p className="text-lg font-semibold">Total Investment: ${investment.amount}</p>
+            <p className="text-sm text-gray-600">
+              Date: {new Date(investment.investmentDate).toLocaleDateString()}
+            </p>
+          </div>
 
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Investment Growth</h3>
-          {investment?.growthData && investment.growthData.length > 0 ? (
+          {/* Chart */}
+          <h3 className="text-lg font-semibold mb-4">Investment Growth</h3>
+          {investment.growthData && investment.growthData.length > 0 ? (
             <ResponsiveContainer width="100%" height={350}>
-              <LineChart data={investment.growthData}>
+              <LineChart
+                data={investment.growthData.map((data) => ({
+                  date: new Date(data.date).toLocaleDateString(),
+                  value: data.value,
+                }))}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="date"
-                  tickFormatter={(date) => new Date(date).toLocaleDateString()}
-                />
+                <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
                 <Line type="monotone" dataKey="value" stroke="#4CAF50" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-500 text-center mb-4">No growth data available.</p>
+            <p className="text-gray-500 text-center">No growth data available.</p>
           )}
-
-          {/* Investment Form */}
-          <div className="mt-6 p-6 bg-gray-100 shadow-sm rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Add Investment</h3>
-            <form onSubmit={handleInvestment} className="flex flex-col space-y-4">
-              <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="Enter investment amount"
-              />
-              <button
-                type="submit"
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-5 rounded-lg transition duration-200"
-              >
-                Invest Now
-              </button>
-            </form>
-          </div>
         </>
+      ) : (
+        <p className="text-center text-gray-500">No investment found. Create one below.</p>
       )}
+
+      {/* Investment Form */}
+      <div className="mt-8 p-6 bg-gray-100 rounded-lg">
+        <h3 className="text-lg font-semibold mb-4 text-center">Add Investment</h3>
+        <form onSubmit={handleInvestment} className="flex flex-col space-y-4">
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="p-3 border rounded-md"
+            placeholder="Enter investment amount"
+          />
+          <button type="submit" className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-md">
+            Invest Now
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
