@@ -132,3 +132,28 @@ export const holdInvestment = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+export const continueInvestment = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const investment = await Investment.findById(id);
+    if (!investment) {
+      return res.status(404).json({ message: "Investment not found." });
+    }
+
+    if (investment.status !== "On Hold" && investment.status !== "Closed") {
+      return res.status(400).json({ message: "Investment is already active." });
+    }
+
+    investment.status = "Active";
+    investment.holdReason = "";
+
+    await investment.save();
+    return res.status(200).json({ message: "Investment has been reactivated.", investment });
+  } catch (error) {
+    console.error("Error reactivating investment:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
