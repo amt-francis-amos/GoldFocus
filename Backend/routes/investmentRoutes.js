@@ -1,7 +1,7 @@
 import express from "express";
+import mongoose from "mongoose";
 import Investment from "../models/InvestmentModel.js";
-import authMiddleware from "../middlewares/auth.js";
-
+import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -17,9 +17,11 @@ router.get("/:userId", authMiddleware, async (req, res) => {
 
     console.log(`Fetching investment for user ID: ${userId}`);
 
+   
     const investment = await Investment.findOne({ userId: mongoose.Types.ObjectId(userId) });
 
     if (!investment) {
+      console.warn(`No investment found for user ID: ${userId}`);
       return res.status(404).json({ message: "No investment found" });
     }
 
