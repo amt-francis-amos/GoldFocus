@@ -18,7 +18,7 @@ const InvestmentDashboard = ({ userId }) => {
     const fetchInvestmentDetails = async () => {
       if (!userId) {
         console.error("User ID is missing. Skipping API call.");
-        return; // Don't make API request if userId is missing
+        return; 
       }
   
       try {
