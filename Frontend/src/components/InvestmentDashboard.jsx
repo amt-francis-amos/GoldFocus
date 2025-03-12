@@ -33,13 +33,14 @@ const InvestmentDashboard = ({ userId }) => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        setInvestments(response.data);
-      } catch (err) {
-        if (err.response?.status === 404) {
-          setInvestments([]);
+        if (Array.isArray(response.data)) {
+          setInvestments(response.data);
         } else {
-          setError(err.response?.data?.message || "Failed to fetch investments.");
+          setInvestments([]); 
         }
+      } catch (err) {
+        setInvestments([]);
+        setError(err.response?.data?.message || "Failed to fetch investments.");
       } finally {
         setLoading(false);
       }
@@ -67,7 +68,7 @@ const InvestmentDashboard = ({ userId }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setInvestments([...investments, response.data]);
+      setInvestments((prev) => [...prev, response.data]);
       setAmount("");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create investment.");
@@ -77,13 +78,19 @@ const InvestmentDashboard = ({ userId }) => {
   if (loading) return <p className="text-center text-lg">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
+  console.log("Investments:", investments); 
+
  
-  const combinedGrowthData = investments.flatMap((investment) =>
-    investment.growthData.map((data) => ({
-      date: new Date(data.date).toLocaleDateString(),
-      value: data.value,
-    }))
-  );
+  const combinedGrowthData = Array.isArray(investments)
+    ? investments.flatMap((investment) =>
+        Array.isArray(investment?.growthData)
+          ? investment.growthData.map((data) => ({
+              date: new Date(data.date).toLocaleDateString(),
+              value: data.value,
+            }))
+          : []
+      )
+    : [];
 
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
@@ -93,7 +100,8 @@ const InvestmentDashboard = ({ userId }) => {
         <>
           <div className="p-4 bg-gray-100 rounded-lg mb-6">
             <p className="text-lg font-semibold">
-              Total Investments: ${investments.reduce((sum, inv) => sum + inv.amount, 0)}
+              Total Investments: $
+              {investments.reduce((sum, inv) => sum + (inv.amount || 0), 0)}
             </p>
           </div>
 
