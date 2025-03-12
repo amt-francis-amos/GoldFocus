@@ -10,7 +10,7 @@ router.get("/:userId", authMiddleware, async (req, res) => {
   try {
     const { userId } = req.params;
     
-    
+   
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ error: "Invalid user ID" });
     }
@@ -29,6 +29,7 @@ router.get("/:userId", authMiddleware, async (req, res) => {
     res.status(500).json({ error: err.message || "Internal Server Error" });
   }
 });
+
 
 router.patch("/:id/hold", authMiddleware, async (req, res) => {
   try {

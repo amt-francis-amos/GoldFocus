@@ -20,10 +20,10 @@ const InvestmentDashboard = ({ userId }) => {
     const fetchInvestmentDetails = async () => {
       if (!userId) {
         console.error("User ID is missing. Skipping API call.");
+        setLoading(false);
         return;
       }
 
-      // Use the same key as stored in localStorage ("token")
       const token = localStorage.getItem("token");
 
       if (!token) {
@@ -40,14 +40,18 @@ const InvestmentDashboard = ({ userId }) => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-
         setInvestment(response.data);
       } catch (error) {
         console.error("Error fetching investment details:", error);
-        setError(
-          error.response?.data?.message ||
+        if (error.response && error.response.status === 404) {
+          // Handle case when no investment exists for the user.
+          setError("No investment found.");
+        } else {
+          setError(
+            error.response?.data?.message ||
             "Failed to fetch investment details."
-        );
+          );
+        }
       } finally {
         setLoading(false);
       }
@@ -64,7 +68,6 @@ const InvestmentDashboard = ({ userId }) => {
       return;
     }
 
-    // Use the same key ("token")
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -84,7 +87,6 @@ const InvestmentDashboard = ({ userId }) => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
       setInvestment(response.data);
       setAmount("");
       setError("");
@@ -92,19 +94,17 @@ const InvestmentDashboard = ({ userId }) => {
       console.error("Error creating investment:", error);
       setError(
         error.response?.data?.message ||
-          "Failed to create investment. Try again."
+        "Failed to create investment. Try again."
       );
     }
   };
 
   if (loading) return <p>Loading investment details...</p>;
-  if (!investment) return <p>{error || "No investment found."}</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="max-w-3xl mx-auto p-4 bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-semibold mb-4">Investment Dashboard</h2>
-
-      {error && <p className="text-red-500 text-sm">{error}</p>}
 
       {/* Investment Details */}
       <div className="mb-4 p-4 bg-gray-100 rounded-lg">
@@ -150,7 +150,6 @@ const InvestmentDashboard = ({ userId }) => {
             className="p-2 border rounded"
             placeholder="Enter investment amount"
           />
-          {error && <p className="text-red-500 text-sm">{error}</p>}
           <button type="submit" className="bg-green-600 text-white py-2 px-4 rounded">
             Invest Now
           </button>
