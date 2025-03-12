@@ -7,7 +7,7 @@ export const createInvestment = async (req, res) => {
   session.startTransaction();
 
   try {
-    const { userId, amount, investmentDate } = req.body;
+    const { userId, amount, investmentDate, status, holdReason } = req.body;
 
     if (!userId || !amount) {
       return res.status(400).json({ message: "Missing required fields: userId and amount." });
@@ -17,6 +17,10 @@ export const createInvestment = async (req, res) => {
 
     if (existingInvestment) {
       existingInvestment.amount += amount;
+
+      // Update status and holdReason if provided
+      if (status) existingInvestment.status = status;
+      if (holdReason !== undefined) existingInvestment.holdReason = holdReason;
 
       let lastGrowthDate = new Date(
         existingInvestment.growthData?.slice(-1)[0]?.date || investmentDate || Date.now()
@@ -58,8 +62,8 @@ export const createInvestment = async (req, res) => {
         amount,
         investmentDate: initialDate,
         growthData,
-        status: "Active",
-        holdReason: "",
+        status: status || "Active", 
+        holdReason: holdReason || "",
       });
 
       const savedInvestment = await newInvestment.save({ session });
