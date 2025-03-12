@@ -48,29 +48,34 @@ const InvestmentDashboard = ({ userId }) => {
   const handleInvestment = async (e) => {
     e.preventDefault();
     setError("");
-
+  
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
       setError("Enter a valid investment amount.");
       return;
     }
-
+  
+    if (investments.length > 0 && (investments[0].status === "On Hold" || investments[0].status === "Closed")) {
+      setError("Investment is on hold or closed. You cannot invest at this time.");
+      return;
+    }
+  
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Authentication error. Please log in.");
-
+  
       const response = await axios.post(
         "https://goldfocus-backend.onrender.com/api/investments",
         { userId, amount: Number(amount) },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
+  
       setInvestments([response.data]);
       setAmount("");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create investment.");
     }
   };
-
+  
   // Function to put an investment on hold
   const handleHoldInvestment = async (investmentId) => {
     const holdReason = prompt("Enter a reason for holding this investment:");

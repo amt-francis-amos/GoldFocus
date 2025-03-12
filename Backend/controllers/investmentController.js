@@ -16,6 +16,11 @@ export const createInvestment = async (req, res) => {
     let existingInvestment = await Investment.findOne({ userId }).session(session);
 
     if (existingInvestment) {
+      // Prevent investing if the status is "On Hold" or "Closed"
+      if (existingInvestment.status === "On Hold" || existingInvestment.status === "Closed") {
+        return res.status(400).json({ message: "Investment is on hold or closed. You cannot invest at this time." });
+      }
+
       existingInvestment.amount += amount;
 
       if (status) existingInvestment.status = status;
