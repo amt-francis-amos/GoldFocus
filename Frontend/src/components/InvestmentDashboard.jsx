@@ -124,6 +124,29 @@ const InvestmentDashboard = ({ userId }) => {
       ) : (
         <p className="text-gray-500 text-center">No investment found. Create one below.</p>
       )}
+
+      <div className="mt-6">
+        <h3 className="text-lg font-semibold mb-3">Add Investment</h3>
+        <form onSubmit={handleInvestment} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Investment Amount ($)</label>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full mt-1 p-2 border rounded-md focus:ring focus:ring-indigo-200"
+              placeholder="Enter amount"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition"
+          >
+            Invest Now
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
