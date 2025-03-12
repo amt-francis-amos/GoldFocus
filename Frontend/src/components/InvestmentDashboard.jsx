@@ -23,7 +23,8 @@ const InvestmentDashboard = ({ userId }) => {
         return;
       }
 
-      const token = localStorage.getItem("authToken");
+      // Use the same key as stored in localStorage ("token")
+      const token = localStorage.getItem("token");
 
       if (!token) {
         console.error("Authorization token is missing.");
@@ -63,7 +64,8 @@ const InvestmentDashboard = ({ userId }) => {
       return;
     }
 
-    const token = localStorage.getItem("authToken");
+    // Use the same key ("token")
+    const token = localStorage.getItem("token");
 
     if (!token) {
       setError("Authentication error: Please log in again.");
@@ -89,7 +91,8 @@ const InvestmentDashboard = ({ userId }) => {
     } catch (error) {
       console.error("Error creating investment:", error);
       setError(
-        error.response?.data?.message || "Failed to create investment. Try again."
+        error.response?.data?.message ||
+          "Failed to create investment. Try again."
       );
     }
   };
@@ -109,8 +112,7 @@ const InvestmentDashboard = ({ userId }) => {
           Total Investment: ${investment.amount}
         </p>
         <p className="text-sm text-gray-600">
-          Investment Date:{" "}
-          {new Date(investment.investmentDate).toLocaleDateString()}
+          Investment Date: {new Date(investment.investmentDate).toLocaleDateString()}
         </p>
       </div>
 
