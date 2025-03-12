@@ -59,7 +59,7 @@ const App = () => {
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
         {userId ? (
-          <Route path="/dashboard" element={<InvestmentDashboard userId={userId} />} />
+          <Route path="/dashboard" element={<InvestmentDashboard userId={loggedInUserId}/>} />
         ) : (
           <Route path="/dashboard" element={<p>Loading user details...</p>} />
         )}

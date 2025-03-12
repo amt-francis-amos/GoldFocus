@@ -22,18 +22,22 @@ const InvestmentDashboard = ({ userId }) => {
         console.error("User ID is missing. Skipping API call.");
         return;
       }
-
+    
       try {
+        const token = localStorage.getItem("authToken"); // 🔹 Retrieve JWT token
         const response = await axios.get(
-          `https://goldfocus-backend.onrender.com/api/investments/${userId}`
+          `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` }, // 🔹 Add Authorization header
+          }
         );
+    
         setInvestment(response.data);
       } catch (error) {
         console.error("Error fetching investment details:", error);
-      } finally {
-        setLoading(false);
       }
     };
+    
 
     fetchInvestmentDetails();
   }, [userId]);
