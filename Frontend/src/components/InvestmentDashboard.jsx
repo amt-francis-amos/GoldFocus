@@ -13,6 +13,8 @@ import {
 const InvestmentDashboard = ({ userId }) => {
   const [investment, setInvestment] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [amount, setAmount] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchInvestmentDetails = async () => {
@@ -20,7 +22,7 @@ const InvestmentDashboard = ({ userId }) => {
         console.error("User ID is missing. Skipping API call.");
         return;
       }
-  
+
       try {
         const response = await axios.get(
           `https://goldfocus-backend.onrender.com/api/investments/${userId}`
@@ -32,11 +34,37 @@ const InvestmentDashboard = ({ userId }) => {
         setLoading(false);
       }
     };
-  
+
     fetchInvestmentDetails();
   }, [userId]);
-  
-  
+
+  const createInvestment = async (e) => {
+    e.preventDefault(); 
+
+    if (!amount || isNaN(amount) || Number(amount) <= 0) {
+      setError("Please enter a valid investment amount.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "https://goldfocus-backend.onrender.com/api/investments",
+        {
+          userId: userId,
+          amount: Number(amount),
+          investmentDate: new Date().toISOString(),
+        }
+      );
+
+      setInvestment(response.data); 
+      setAmount(""); 
+      setError("");
+    } catch (error) {
+      console.error("Error creating investment:", error);
+      setError("Failed to create investment. Try again.");
+    }
+  };
+
   if (loading) return <p>Loading investment details...</p>;
   if (!investment) return <p>No investment found.</p>;
 
@@ -74,6 +102,24 @@ const InvestmentDashboard = ({ userId }) => {
           <Line type="monotone" dataKey="value" stroke="#4CAF50" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
+
+      {/* 🟢 Add New Investment Form */}
+      <div className="mt-6 p-4 bg-gray-100 rounded-lg">
+        <h3 className="text-lg font-semibold mb-2">Add Investment</h3>
+        <form onSubmit={createInvestment} className="flex flex-col space-y-3">
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="p-2 border rounded"
+            placeholder="Enter investment amount"
+          />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <button type="submit" className="bg-green-600 text-white py-2 px-4 rounded">
+            Invest Now
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
