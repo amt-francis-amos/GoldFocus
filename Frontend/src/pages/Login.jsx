@@ -7,39 +7,45 @@ import "react-toastify/dist/ReactToastify.css";
 import { assets } from "../assets/assets";
 
 const Login = () => {
-  const [accountID, setAccountID] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    accountID: "",
+    email: "",
+    password: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
     const url = isLogin
       ? "https://goldfocus-backend.onrender.com/api/users/login"
       : "https://goldfocus-backend.onrender.com/api/users/register";
-  
-    const payload = isLogin ? { accountID, password } : { email, password };
-  
+
+    const payload = isLogin ? { accountID: formData.accountID, password: formData.password } : { email: formData.email, password: formData.password };
+
     try {
       const response = await axios.post(url, payload, {
         headers: { "Content-Type": "application/json" },
       });
-  
+
       toast.success(response.data.message);
-  
+
       if (isLogin) {
         localStorage.setItem("user", "true");
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("userId", response.data.userId); 
+        localStorage.setItem("userId", response.data.user.id);
         window.dispatchEvent(new Event("storage"));
         setTimeout(() => navigate("/dashboard"), 2000);
       } else {
-        toast.info(`Your Account ID has been sent to ${email}`);
+        toast.info(`Your Account ID has been sent to ${formData.email}`);
         setTimeout(() => {
           setIsLogin(true);
           navigate("/login");
@@ -51,7 +57,6 @@ const Login = () => {
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="min-h-screen flex flex-col mt-20 justify-center items-center bg-gray-100">
@@ -64,39 +69,37 @@ const Login = () => {
 
         <form onSubmit={handleSubmit}>
           {!isLogin ? (
-           
-            <>
-              <div className="mb-4">
-                <label className="block text-gray-600">Email</label>
-                <div className="flex items-center border p-2 rounded">
-                  <FiMail className="text-gray-500 mr-2" />
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="w-full outline-none"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
+            <div className="mb-4">
+              <label className="block text-gray-600">Email</label>
+              <div className="flex items-center border p-2 rounded">
+                <FiMail className="text-gray-500 mr-2" />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  className="w-full outline-none"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-            </>
+            </div>
           ) : (
-         
-            <>
-              <div className="mb-4">
-                <label className="block text-gray-600">Account ID</label>
-                <div className="flex items-center border p-2 rounded">
-                  <FiUser className="text-gray-500 mr-2" />
-                  <input
-                    type="text"
-                    placeholder="Enter your Account ID"
-                    className="w-full outline-none"
-                    value={accountID}
-                    onChange={(e) => setAccountID(e.target.value)}
-                  />
-                </div>
+            <div className="mb-4">
+              <label className="block text-gray-600">Account ID</label>
+              <div className="flex items-center border p-2 rounded">
+                <FiUser className="text-gray-500 mr-2" />
+                <input
+                  type="text"
+                  name="accountID"
+                  placeholder="Enter your Account ID"
+                  className="w-full outline-none"
+                  value={formData.accountID}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-            </>
+            </div>
           )}
 
           <div className="mb-4">
@@ -105,10 +108,12 @@ const Login = () => {
               <FiLock className="text-gray-500 mr-2" />
               <input
                 type={showPassword ? "text" : "password"}
+                name="password"
                 placeholder="Enter your password"
                 className="w-full outline-none"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={handleChange}
+                required
               />
               <button type="button" onClick={() => setShowPassword(!showPassword)}>
                 {showPassword ? <FiEyeOff /> : <FiEye />}
