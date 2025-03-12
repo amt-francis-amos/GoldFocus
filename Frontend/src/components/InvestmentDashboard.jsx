@@ -33,11 +33,7 @@ const InvestmentDashboard = ({ userId }) => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        if (Array.isArray(response.data)) {
-          setInvestments(response.data);
-        } else {
-          setInvestments([]); 
-        }
+        setInvestments(response.data ? [response.data] : []);
       } catch (err) {
         setInvestments([]);
         setError(err.response?.data?.message || "Failed to fetch investments.");
@@ -68,7 +64,10 @@ const InvestmentDashboard = ({ userId }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setInvestments((prev) => [...prev, response.data]);
+      setInvestments((prev) =>
+        prev.map((inv) => (inv.userId === response.data.userId ? response.data : inv))
+      );
+
       setAmount("");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create investment.");
@@ -85,6 +84,8 @@ const InvestmentDashboard = ({ userId }) => {
           : []
       )
     : [];
+
+  combinedGrowthData.sort((a, b) => new Date(a.date) - new Date(b.date));
 
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
