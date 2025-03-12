@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   LineChart,
   Line,
@@ -14,11 +16,10 @@ const InvestmentDashboard = ({ userId }) => {
   const [investments, setInvestments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [amount, setAmount] = useState("");
-  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!userId) {
-      setError("User ID is missing.");
+      toast.error("User ID is missing.");
       setLoading(false);
       return;
     }
@@ -36,7 +37,7 @@ const InvestmentDashboard = ({ userId }) => {
         setInvestments(response.data ? [response.data] : []);
       } catch (err) {
         setInvestments([]);
-        setError(err.response?.data?.message || "Failed to fetch investments.");
+        toast.error(err.response?.data?.message || "Failed to fetch investments.");
       } finally {
         setLoading(false);
       }
@@ -47,36 +48,35 @@ const InvestmentDashboard = ({ userId }) => {
 
   const handleInvestment = async (e) => {
     e.preventDefault();
-    setError("");
-  
+
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
-      setError("Enter a valid investment amount.");
+      toast.error("Enter a valid investment amount.");
       return;
     }
-  
+
     if (investments.length > 0 && (investments[0].status === "On Hold" || investments[0].status === "Closed")) {
-      setError("Investment is on hold or closed. You cannot invest at this time.");
+      toast.error("Investment is on hold or closed. You cannot invest at this time.");
       return;
     }
-  
+
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Authentication error. Please log in.");
-  
+
       const response = await axios.post(
         "https://goldfocus-backend.onrender.com/api/investments",
         { userId, amount: Number(amount) },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-  
+
       setInvestments([response.data]);
       setAmount("");
+      toast.success("Investment added successfully!");
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to create investment.");
+      toast.error(err.response?.data?.message || "Failed to create investment.");
     }
   };
-  
-  // Function to put an investment on hold
+
   const handleHoldInvestment = async (investmentId) => {
     const holdReason = prompt("Enter a reason for holding this investment:");
 
@@ -99,8 +99,7 @@ const InvestmentDashboard = ({ userId }) => {
       );
 
       if (response.ok) {
-        alert("Investment put on hold successfully.");
-        // Update investment status locally
+        toast.success("Investment put on hold successfully.");
         setInvestments((prevInvestments) =>
           prevInvestments.map((inv) =>
             inv._id === investmentId ? { ...inv, status: "On Hold", holdReason } : inv
@@ -108,10 +107,10 @@ const InvestmentDashboard = ({ userId }) => {
         );
       } else {
         const data = await response.json();
-        alert(`Error: ${data.message}`);
+        toast.error(`Error: ${data.message}`);
       }
     } catch (error) {
-      console.error("Error holding investment:", error);
+      toast.error("Error holding investment.");
     }
   };
 
@@ -129,7 +128,6 @@ const InvestmentDashboard = ({ userId }) => {
       <h2 className="text-2xl font-semibold mb-6 text-center">Investment Dashboard</h2>
 
       {loading && <p className="text-center text-lg">Loading...</p>}
-      {error && <p className="text-center text-red-500">{error}</p>}
 
       {!loading && investments.length > 0 && (
         <>
@@ -180,6 +178,9 @@ const InvestmentDashboard = ({ userId }) => {
           Invest Now
         </button>
       </form>
+
+    
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
