@@ -43,17 +43,25 @@ export const registerUser = async (req, res) => {
     const accountID = await generateAccountID();
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Save user in DB
     const newUser = await User.create({ accountID, email, password: hashedPassword });
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Your Account Details",
-      text: `Welcome! Your Account ID is ${accountID}. Use this ID and your password to log in.`,
-    });
+    // Send email with account ID
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Your Account Details",
+        text: `Welcome! Your Account ID is ${accountID}. Use this ID and your password to log in.`,
+      });
+    } catch (emailError) {
+      console.error("Email sending error:", emailError);
+      return res.status(500).json({ success: false, message: "User registered, but email could not be sent. Contact support." });
+    }
 
     res.status(201).json({ success: true, message: "User registered successfully. Check your email for your Account ID." });
   } catch (error) {
+    console.error("Registration error:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
