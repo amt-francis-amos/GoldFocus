@@ -18,6 +18,8 @@ const InvestmentDashboard = ({ userId }) => {
 
   useEffect(() => {
     const fetchInvestmentDetails = async () => {
+      console.log("Fetching investment details for userId:", userId); // Debugging userId
+
       if (!userId) {
         console.error("User ID is missing. Skipping API call.");
         setLoading(false);
@@ -25,6 +27,7 @@ const InvestmentDashboard = ({ userId }) => {
       }
 
       const token = localStorage.getItem("token");
+      console.log("Retrieved token:", token); // Debugging token
 
       if (!token) {
         console.error("Authorization token is missing.");
@@ -34,24 +37,26 @@ const InvestmentDashboard = ({ userId }) => {
       }
 
       try {
-        const response = await axios.get(
-          `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setInvestment(response.data);
-        console.log("Fetching investment details for userId:", userId);
+        const url = `https://goldfocus-backend.onrender.com/api/investments/${userId}`;
+        console.log("Making GET request to:", url); // Debugging API call
 
+        const response = await axios.get(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        console.log("API response:", response.data); // Debugging API response
+        setInvestment(response.data);
       } catch (error) {
         console.error("Error fetching investment details:", error);
+        if (error.response) {
+          console.log("Error response data:", error.response.data);
+          console.log("Error response status:", error.response.status);
+        }
         if (error.response && error.response.status === 404) {
-          
           setError("No investment found.");
         } else {
           setError(
-            error.response?.data?.message ||
-            "Failed to fetch investment details."
+            error.response?.data?.message || "Failed to fetch investment details."
           );
         }
       } finally {
@@ -78,25 +83,33 @@ const InvestmentDashboard = ({ userId }) => {
     }
 
     try {
+      const payload = {
+        userId: userId,
+        amount: Number(amount),
+        investmentDate: new Date().toISOString(),
+      };
+      console.log("Sending investment payload:", payload); // Debugging investment payload
+
       const response = await axios.post(
         "https://goldfocus-backend.onrender.com/api/investments",
-        {
-          userId: userId,
-          amount: Number(amount),
-          investmentDate: new Date().toISOString(),
-        },
+        payload,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
+      console.log("Investment created successfully:", response.data); // Debugging API response
       setInvestment(response.data);
       setAmount("");
       setError("");
     } catch (error) {
       console.error("Error creating investment:", error);
+      if (error.response) {
+        console.log("Error response data:", error.response.data);
+        console.log("Error response status:", error.response.status);
+      }
       setError(
-        error.response?.data?.message ||
-        "Failed to create investment. Try again."
+        error.response?.data?.message || "Failed to create investment. Try again."
       );
     }
   };
