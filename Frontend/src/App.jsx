@@ -18,7 +18,19 @@ const App = () => {
   useEffect(() => {
     const fetchUserId = async () => {
       try {
-        const response = await axios.get("https://goldfocus-backend.onrender.com/api/auth/user");
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          console.warn("No authentication token found. Redirecting to login.");
+          setUserId(null);
+          navigate("/login");
+          return;
+        }
+
+        const response = await axios.get("https://goldfocus-backend.onrender.com/api/auth/user", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         const fetchedUserId = response.data.userId;
   
         if (fetchedUserId) {
@@ -30,17 +42,17 @@ const App = () => {
       } catch (error) {
         console.error("Error fetching user ID:", error);
         localStorage.removeItem("userId");
+        setUserId(null);
       }
     };
-  
+
     const storedUserId = localStorage.getItem("userId");
     if (!storedUserId) {
       fetchUserId();
     } else {
       setUserId(storedUserId);
     }
-  }, []);
-  
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -58,14 +70,14 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
-        {userId ? (
-         <Route path="/dashboard" element={<InvestmentDashboard userId={localStorage.getItem("userId")} />
-        } />
 
+        {userId ? (
+          <Route path="/dashboard" element={<InvestmentDashboard userId={userId} />} />
         ) : (
           <Route path="/dashboard" element={<p>Loading user details...</p>} />
         )}
       </Routes>
+      
       {location.pathname !== "/login" && <Footer />}
     </div>
   );
