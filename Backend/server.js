@@ -3,7 +3,7 @@ import cors from 'cors';
 import 'dotenv/config'; 
 import connectDB from './config/mongoDb.js'; 
 import userRoutes from './routes/userRoutes.js'; 
-import investmentRoutes from "./routes/investmentRoutes.js";
+import investmentsRouter from "./routes/investmentRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,7 +17,7 @@ app.use(cors());
 
 
 app.use('/api/users', userRoutes);
-app.use("/api/investments", investmentRoutes);
+app.use("/api/investments", investmentsRouter);
 
 
 app.listen(PORT, () => {
