@@ -52,17 +52,22 @@ const InvestmentDashboard = ({ userId }) => {
     e.preventDefault();
     setError("");
   
-   
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
       setError("Enter a valid investment amount.");
+      return;
+    }
+  
+    if (!userId) {
+      setError("User ID is required.");
       return;
     }
   
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Authentication error. Please log in.");
-
+  
       const investmentData = {
+        userId,  // Add this
         amount: Number(amount),
         investmentDate: new Date().toISOString(),
       };
