@@ -17,22 +17,15 @@ const InvestmentDashboard = ({ userId }) => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchInvestmentDetails = async () => {
-      if (!userId) {
-        console.error("User ID is missing. Skipping API call.");
-        return;
-      }
-
-      const token = localStorage.getItem("authToken");
-
-      if (!token) {
-        console.error("Authorization token is missing.");
-        setError("Authentication error: Please log in again.");
-        setLoading(false);
-        return;
-      }
-
+    const fetchInvestment = async () => {
       try {
+        const token = localStorage.getItem("token");
+        
+        if (!token) {
+          setError("Authorization token is missing");
+          return;
+        }
+
         const response = await axios.get(
           `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
           {
@@ -41,56 +34,19 @@ const InvestmentDashboard = ({ userId }) => {
         );
 
         setInvestment(response.data);
-      } catch (error) {
-        console.error("Error fetching investment details:", error);
-        setError("Failed to fetch investment details.");
-      } finally {
-        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching investment:", err);
+        setError("Failed to fetch investment data.");
       }
     };
 
-    fetchInvestmentDetails();
+    if (userId) {
+      fetchInvestment();
+    }
   }, [userId]);
 
-  const createInvestment = async (e) => {
-    e.preventDefault();
-
-    if (!amount || isNaN(amount) || Number(amount) <= 0) {
-      setError("Please enter a valid investment amount.");
-      return;
-    }
-
-    const token = localStorage.getItem("authToken");
-
-    if (!token) {
-      setError("Authentication error: Please log in again.");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        "https://goldfocus-backend.onrender.com/api/investments",
-        {
-          userId: userId,
-          amount: Number(amount),
-          investmentDate: new Date().toISOString(),
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      setInvestment(response.data);
-      setAmount("");
-      setError("");
-    } catch (error) {
-      console.error("Error creating investment:", error);
-      setError("Failed to create investment. Try again.");
-    }
-  };
-
-  if (loading) return <p>Loading investment details...</p>;
-  if (!investment) return <p>{error || "No investment found."}</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (!investment) return <p>Loading investment data...</p>;
 
   return (
     <div className="max-w-3xl mx-auto p-4 bg-white shadow-lg rounded-lg">
