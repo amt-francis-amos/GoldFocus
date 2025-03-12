@@ -10,40 +10,40 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const InvestmentDashboard = ({ userId }) => {
+const InvestmentDashboard = () => {
+  const [userId, setUserId] = useState(localStorage.getItem("userId"));
   const [investment, setInvestment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!userId) {
+      console.error("User ID is missing. Skipping API call.");
+      setLoading(false);
+      return;
+    }
+
     const fetchInvestmentDetails = async () => {
-      if (!userId) {
-        console.error("User ID is missing. Skipping API call.");
-        return;
-      }
-    
       try {
-        const token = localStorage.getItem("authToken"); 
+        const token = localStorage.getItem("authToken");
         const response = await axios.get(
           `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` }, // 🔹 
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-    
         setInvestment(response.data);
       } catch (error) {
         console.error("Error fetching investment details:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    
 
     fetchInvestmentDetails();
   }, [userId]);
 
   const createInvestment = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
       setError("Please enter a valid investment amount.");
@@ -60,8 +60,8 @@ const InvestmentDashboard = ({ userId }) => {
         }
       );
 
-      setInvestment(response.data); 
-      setAmount(""); 
+      setInvestment(response.data);
+      setAmount("");
       setError("");
     } catch (error) {
       console.error("Error creating investment:", error);
@@ -107,7 +107,7 @@ const InvestmentDashboard = ({ userId }) => {
         </LineChart>
       </ResponsiveContainer>
 
-      {/* 🟢 Add New Investment Form */}
+      {/* Add New Investment Form */}
       <div className="mt-6 p-4 bg-gray-100 rounded-lg">
         <h3 className="text-lg font-semibold mb-2">Add Investment</h3>
         <form onSubmit={createInvestment} className="flex flex-col space-y-3">
