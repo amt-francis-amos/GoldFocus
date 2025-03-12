@@ -18,27 +18,26 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
     const url = isLogin
       ? "https://goldfocus-backend.onrender.com/api/users/login"
       : "https://goldfocus-backend.onrender.com/api/users/register";
-    
-    const payload = isLogin
-      ? { accountID, password } 
-      : { email, password };      
-
+  
+    const payload = isLogin ? { accountID, password } : { email, password };
+  
     try {
       const response = await axios.post(url, payload, {
         headers: { "Content-Type": "application/json" },
       });
-
+  
       toast.success(response.data.message);
-
+  
       if (isLogin) {
         localStorage.setItem("user", "true");
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("userId", response.data.userId); // Store userId
         window.dispatchEvent(new Event("storage"));
-        setTimeout(() => navigate("/"), 2000);
+        setTimeout(() => navigate("/dashboard"), 2000);
       } else {
         toast.info(`Your Account ID has been sent to ${email}`);
         setTimeout(() => {
@@ -52,6 +51,7 @@ const Login = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex flex-col mt-20 justify-center items-center bg-gray-100">
