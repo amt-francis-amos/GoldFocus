@@ -17,48 +17,28 @@ const InvestmentDashboard = ({ userId }) => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!userId) {
+      setError("User ID is missing.");
+      setLoading(false);
+      return;
+    }
+
     const fetchInvestmentDetails = async () => {
-      console.log("Fetching investment details for userId:", userId); // Debugging userId
-
-      if (!userId) {
-        console.error("User ID is missing. Skipping API call.");
-        setLoading(false);
-        return;
-      }
-
       const token = localStorage.getItem("token");
-      console.log("Retrieved token:", token); // Debugging token
-
       if (!token) {
-        console.error("Authorization token is missing.");
         setError("Authentication error: Please log in again.");
         setLoading(false);
         return;
       }
 
       try {
-        const url = `https://goldfocus-backend.onrender.com/api/investments/${userId}`;
-        console.log("Making GET request to:", url); // Debugging API call
-
-        const response = await axios.get(url, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        console.log("API response:", response.data); // Debugging API response
+        const response = await axios.get(
+          `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         setInvestment(response.data);
-      } catch (error) {
-        console.error("Error fetching investment details:", error);
-        if (error.response) {
-          console.log("Error response data:", JSON.stringify(error.response.data, null, 2));
-          console.log("Error response status:", error.response.status);
-        }
-        if (error.response?.status === 404) {
-          setError("No investment found.");
-        } else {
-          setError(
-            error.response?.data?.message || "Failed to fetch investment details."
-          );
-        }
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to fetch investment details.");
       } finally {
         setLoading(false);
       }
@@ -69,47 +49,28 @@ const InvestmentDashboard = ({ userId }) => {
 
   const createInvestment = async (e) => {
     e.preventDefault();
-
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
       setError("Please enter a valid investment amount.");
       return;
     }
 
     const token = localStorage.getItem("token");
-
     if (!token) {
       setError("Authentication error: Please log in again.");
       return;
     }
 
     try {
-      const payload = {
-        amount: Number(amount), // ✅ Removed `userId` if backend uses authentication
-        investmentDate: new Date().toISOString(),
-      };
-      console.log("Sending investment payload:", payload); // Debugging investment payload
-
       const response = await axios.post(
         "https://goldfocus-backend.onrender.com/api/investments",
-        payload,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { amount: Number(amount), investmentDate: new Date().toISOString() },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      console.log("Investment created successfully:", response.data); // Debugging API response
       setInvestment(response.data);
       setAmount("");
       setError("");
-    } catch (error) {
-      console.error("Error creating investment:", error);
-      if (error.response) {
-        console.log("Error response data:", JSON.stringify(error.response.data, null, 2));
-        console.log("Error response status:", error.response.status);
-      }
-      setError(
-        error.response?.data?.message || "Failed to create investment. Try again."
-      );
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to create investment.");
     }
   };
 
@@ -118,7 +79,7 @@ const InvestmentDashboard = ({ userId }) => {
 
   const chartData = investment?.growthData?.length
     ? investment.growthData
-    : [{ date: new Date(), value: 0 }]; // ✅ Prevents chart crash if no data
+    : [{ date: new Date(), value: 0 }];
 
   return (
     <div className="max-w-3xl mx-auto p-4 bg-white shadow-lg rounded-lg">
@@ -126,9 +87,7 @@ const InvestmentDashboard = ({ userId }) => {
 
       {/* Investment Details */}
       <div className="mb-4 p-4 bg-gray-100 rounded-lg">
-        <p className="text-lg font-semibold">
-          Total Investment: ${investment?.amount || 0}
-        </p>
+        <p className="text-lg font-semibold">Total Investment: ${investment?.amount || 0}</p>
         <p className="text-sm text-gray-600">
           Investment Date: {investment?.investmentDate ? new Date(investment.investmentDate).toLocaleDateString() : "N/A"}
         </p>
@@ -147,10 +106,7 @@ const InvestmentDashboard = ({ userId }) => {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="date"
-            tickFormatter={(date) => new Date(date).toLocaleDateString()}
-          />
+          <XAxis dataKey="date" tickFormatter={(date) => new Date(date).toLocaleDateString()} />
           <YAxis />
           <Tooltip />
           <Line type="monotone" dataKey="value" stroke="#4CAF50" strokeWidth={2} />
