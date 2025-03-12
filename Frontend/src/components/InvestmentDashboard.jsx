@@ -33,7 +33,7 @@ const InvestmentDashboard = ({ userId }) => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        setInvestment(response.data[0]); // Ensure only the first investment is displayed
+        setInvestment(response.data);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to fetch investment.");
       } finally {
@@ -124,22 +124,6 @@ const InvestmentDashboard = ({ userId }) => {
       ) : (
         <p className="text-gray-500 text-center">No investment found. Create one below.</p>
       )}
-
-      <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-        <h3 className="text-lg font-semibold mb-2">Add Investment</h3>
-        <form onSubmit={handleInvestment} className="flex flex-col space-y-3">
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="p-2 border rounded"
-            placeholder="Enter investment amount"
-          />
-          <button type="submit" className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition">
-            Invest Now
-          </button>
-        </form>
-      </div>
     </div>
   );
 };
