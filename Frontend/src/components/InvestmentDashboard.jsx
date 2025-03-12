@@ -36,7 +36,7 @@ const InvestmentDashboard = ({ userId }) => {
         setInvestment(response.data);
       } catch (err) {
         if (err.response?.status === 404) {
-          setInvestment(null); // No investment found
+          setInvestment(null); 
         } else {
           setError(err.response?.data?.message || "Failed to fetch investment.");
         }
@@ -50,28 +50,40 @@ const InvestmentDashboard = ({ userId }) => {
 
   const handleInvestment = async (e) => {
     e.preventDefault();
+    setError("");
+  
+   
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
-      setError("Enter a valid amount.");
+      setError("Enter a valid investment amount.");
       return;
     }
-
+  
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Authentication error. Please log in.");
 
+      const investmentData = {
+        amount: Number(amount),
+        investmentDate: new Date().toISOString(),
+      };
+  
+      console.log("Sending investment data:", investmentData);
+  
       const response = await axios.post(
         "https://goldfocus-backend.onrender.com/api/investments",
-        { amount: Number(amount), investmentDate: new Date().toISOString() },
+        investmentData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
+  
+      console.log("Investment created:", response.data);
       setInvestment(response.data);
       setAmount("");
-      setError("");
     } catch (err) {
+      console.error("Error creating investment:", err.response?.data);
       setError(err.response?.data?.message || "Failed to create investment.");
     }
   };
+  
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
@@ -82,7 +94,7 @@ const InvestmentDashboard = ({ userId }) => {
 
       {investment ? (
         <>
-          {/* Investment Details */}
+         
           <div className="p-4 bg-gray-100 rounded-lg mb-4">
             <p className="text-lg font-semibold">Total: ${investment.amount}</p>
             <p className="text-sm text-gray-600">
@@ -90,7 +102,7 @@ const InvestmentDashboard = ({ userId }) => {
             </p>
           </div>
 
-          {/* Investment Growth Chart */}
+         
           <h3 className="text-lg font-semibold mb-2">Investment Growth</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={investment.growthData || [{ date: new Date(), value: 0 }]}>
@@ -106,7 +118,7 @@ const InvestmentDashboard = ({ userId }) => {
         <p className="text-gray-500">No investment found. Create one below.</p>
       )}
 
-      {/* Add Investment Form */}
+   
       <div className="mt-6 p-4 bg-gray-100 rounded-lg">
         <h3 className="text-lg font-semibold mb-2">Add Investment</h3>
         <form onSubmit={handleInvestment} className="flex flex-col space-y-3">
