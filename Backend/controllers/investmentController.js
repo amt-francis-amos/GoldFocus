@@ -12,22 +12,23 @@ export const createInvestment = async (req, res) => {
     let existingInvestment = await Investment.findOne({ userId });
 
     if (existingInvestment) {
-      // ✅ Update existing investment (add to amount & extend growth data)
+    
       existingInvestment.amount += amount;
 
-      // ✅ Extend growth tracking
+ 
       let lastGrowthDate = new Date(existingInvestment.growthData?.slice(-1)[0]?.date || investmentDate || Date.now());
       
       for (let i = 1; i <= 10; i++) {
-        lastGrowthDate.setDate(lastGrowthDate.getDate() + 30); // Add 30 days per interval
+        let growthDate = new Date(lastGrowthDate);
+        growthDate.setDate(growthDate.getDate() + 30);
         const newValue = existingInvestment.amount * (1 + 0.02 * i);
-        existingInvestment.growthData.push({ date: new Date(lastGrowthDate), value: newValue });
+        existingInvestment.growthData.push({ date: growthDate, value: newValue });
       }
-
+      
       await existingInvestment.save();
       return res.status(200).json(existingInvestment);
     } else {
-      // ✅ Create a new investment if none exists
+   
       const initialDate = new Date(investmentDate || Date.now());
       const growthData = [];
 
