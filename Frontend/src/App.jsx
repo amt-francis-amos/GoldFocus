@@ -21,17 +21,18 @@ const App = () => {
         const response = await axios.get("https://goldfocus-backend.onrender.com/api/auth/user");
         const fetchedUserId = response.data.userId;
         setUserId(fetchedUserId);
-        localStorage.setItem("userId", fetchedUserId); // Store in localStorage
+        localStorage.setItem("userId", fetchedUserId);
       } catch (error) {
         console.error("Error fetching user ID:", error);
-        localStorage.removeItem("userId"); // Clear storage if error occurs
+        localStorage.removeItem("userId");
       }
     };
-
-    if (!userId) {
+  
+    if (!localStorage.getItem("userId")) {
       fetchUserId();
     }
-  }, [userId]);
+  }, []); // <-- Empty array ensures it runs only once
+  
 
   return (
     <div>
@@ -42,7 +43,16 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
-        {userId && <Route path="/dashboard" element={<InvestmentDashboard userId={userId} />} />}
+        {userId && <Route
+  path="/dashboard"
+  element={
+    userId ? (
+      <InvestmentDashboard userId={userId} />
+    ) : (
+      <p>Loading user details...</p>
+    )
+  }
+/>}
       </Routes>
 
       {location.pathname !== "/login" && <Footer />}

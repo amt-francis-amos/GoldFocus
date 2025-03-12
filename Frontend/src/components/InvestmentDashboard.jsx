@@ -15,11 +15,18 @@ const InvestmentDashboard = ({ userId }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!userId) {
+      console.error("User ID is missing!");
+      return;
+    }
+  
     const fetchInvestment = async () => {
       try {
+        console.log(`Fetching investment for user ID: ${userId}`);
         const response = await axios.get(
           `https://goldfocus-backend.onrender.com/api/investments/${userId}`
         );
+        console.log("Investment response:", response.data);
         setInvestment(response.data);
       } catch (error) {
         console.error("Error fetching investment details:", error);
@@ -27,10 +34,10 @@ const InvestmentDashboard = ({ userId }) => {
         setLoading(false);
       }
     };
-
+  
     fetchInvestment();
   }, [userId]);
-
+  
   if (loading) return <p>Loading investment details...</p>;
   if (!investment) return <p>No investment found.</p>;
 
