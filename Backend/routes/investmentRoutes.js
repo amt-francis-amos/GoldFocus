@@ -21,7 +21,7 @@ router.get("/:userId", async (req, res) => {
     }
   });
 
-// Update "On Hold" Status
+
 router.patch("/:id/hold", async (req, res) => {
   try {
     const { status, holdReason } = req.body;

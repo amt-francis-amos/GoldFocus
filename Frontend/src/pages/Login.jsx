@@ -35,7 +35,7 @@ const Login = () => {
       if (isLogin) {
         localStorage.setItem("user", "true");
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("userId", response.data.userId); // Store userId
+        localStorage.setItem("userId", response.data.userId); 
         window.dispatchEvent(new Event("storage"));
         setTimeout(() => navigate("/dashboard"), 2000);
       } else {

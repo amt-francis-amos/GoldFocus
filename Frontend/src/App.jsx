@@ -31,7 +31,7 @@ const App = () => {
     if (!localStorage.getItem("userId")) {
       fetchUserId();
     }
-  }, []); // <-- Empty array ensures it runs only once
+  }, []);
   
 
   return (
