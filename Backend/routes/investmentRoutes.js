@@ -1,13 +1,13 @@
 import express from "express";
 import mongoose from "mongoose";
 import Investment from "../models/InvestmentModel.js";
-import verifyToken from "../middlewares/verify.js"; 
+
 
 
 const router = express.Router();
 
 
-router.get("/:userId", verifyToken, async (req, res) => {
+router.get("/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;
     
