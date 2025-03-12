@@ -126,9 +126,9 @@ const InvestmentDashboard = ({ userId }) => {
         </>
       ) : (
         <p className="text-center text-gray-500">No investments found. Add one below.</p>
-        
       )}
-         <div className="mt-8 p-6 bg-gray-100 rounded-lg">
+
+      <div className="mt-8 p-6 bg-gray-100 rounded-lg">
         <h3 className="text-lg font-semibold mb-4 text-center">Add Investment</h3>
         <form onSubmit={handleInvestment} className="flex flex-col space-y-4">
           <input
@@ -148,6 +148,3 @@ const InvestmentDashboard = ({ userId }) => {
 };
 
 export default InvestmentDashboard;
- 
-
-
