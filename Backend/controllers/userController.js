@@ -6,6 +6,7 @@ import nodemailer from "nodemailer";
 
 dotenv.config();
 
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -14,14 +15,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+
 const generateAccountID = async () => {
   let accountID;
-  let exists;
+  let isUnique = false;
 
-  do {
-    accountID = Math.floor(100000 + Math.random() * 900000);
-    exists = await User.exists({ accountID });
-  } while (exists);
+  while (!isUnique) {
+    accountID = Math.floor(100000 + Math.random() * 900000); 
+    const existingUser = await User.findOne({ accountID });
+    if (!existingUser) isUnique = true;
+  }
 
   return accountID;
 };
@@ -35,6 +38,7 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ success: false, message: "All fields are required" });
     }
 
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ success: false, message: "Email already registered" });
@@ -43,23 +47,36 @@ export const registerUser = async (req, res) => {
     const accountID = await generateAccountID();
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Save user in DB
-    const newUser = await User.create({ accountID, email, password: hashedPassword });
+    const newUser = new User({
+      accountID,
+      email,
+      password: hashedPassword,
+    });
 
-    // Send email with account ID
-    try {
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: "Your Account Details",
-        text: `Welcome! Your Account ID is ${accountID}. Use this ID and your password to log in.`,
-      });
-    } catch (emailError) {
-      console.error("Email sending error:", emailError);
-      return res.status(500).json({ success: false, message: "User registered, but email could not be sent. Contact support." });
-    }
+    await newUser.save();
 
-    res.status(201).json({ success: true, message: "User registered successfully. Check your email for your Account ID." });
+   
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Your Account Details",
+      text: `Welcome! Your Account ID is ${accountID}.\nUse this ID and your password to log in.`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully. Check your email for your Account ID.",
+      token,
+      user: {
+        id: newUser._id,
+        accountID: newUser.accountID,
+        email: newUser.email,
+      },
+    });
   } catch (error) {
     console.error("Registration error:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -71,15 +88,34 @@ export const loginUser = async (req, res) => {
   try {
     const { accountID, password } = req.body;
 
+    if (!accountID || !password) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
     const user = await User.findOne({ accountID });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.status(200).json({ success: true, message: "User logged in successfully", token, user: { id: user._id, accountID, email: user.email } });
+    res.status(200).json({
+      success: true,
+      message: "User logged in successfully",
+      token,
+      user: {
+        id: user._id,
+        accountID: user.accountID,
+        email: user.email,
+      },
+    });
   } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
