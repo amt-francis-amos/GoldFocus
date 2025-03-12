@@ -5,7 +5,7 @@ import authMiddleware from "../middlewares/auth.js";
 
 const router = express.Router();
 
-// Fetch user's investments
+
 router.get("/:userId", authMiddleware, async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -29,7 +29,6 @@ router.get("/:userId", authMiddleware, async (req, res) => {
   }
 });
 
-// Update investment status
 router.patch("/:id/hold", async (req, res) => {
   try {
     const { status, holdReason } = req.body;
