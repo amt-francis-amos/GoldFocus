@@ -44,7 +44,7 @@ const InvestmentDashboard = ({ userId }) => {
       } catch (error) {
         console.error("Error fetching investment details:", error);
         if (error.response && error.response.status === 404) {
-          // Handle case when no investment exists for the user.
+          
           setError("No investment found.");
         } else {
           setError(

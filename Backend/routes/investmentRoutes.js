@@ -10,19 +10,19 @@ router.get("/:userId", authMiddleware, async (req, res) => {
   try {
     const { userId } = req.params;
     
+    console.log(`Received request for userId: ${userId}`);
+
    
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ error: "Invalid user ID" });
+      console.error(`Invalid user ID: ${userId}`);
+      return res.status(400).json({ error: "Invalid user ID format" });
     }
 
-    console.log(`Fetching investment for user ID: ${userId}`);
-
-   
-    const investment = await Investment.findOne({ userId: mongoose.Types.ObjectId(userId) });
+    const investment = await Investment.findOne({ userId: new mongoose.Types.ObjectId(userId) });
 
     if (!investment) {
       console.warn(`No investment found for user ID: ${userId}`);
-      return res.status(404).json({ message: "No investment found" });
+      return res.status(404).json({ message: "Investment not found" });
     }
 
     res.json(investment);
