@@ -10,9 +10,14 @@ router.get("/:userId", authMiddleware, async (req, res) => {
   try {
     const { userId } = req.params;
     
-   
+    
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: "Invalid user ID" });
+    }
+
     console.log(`Fetching investment for user ID: ${userId}`);
-    const investment = await Investment.findOne({ userId: userId });
+
+    const investment = await Investment.findOne({ userId: mongoose.Types.ObjectId(userId) });
 
     if (!investment) {
       return res.status(404).json({ message: "No investment found" });
@@ -25,8 +30,7 @@ router.get("/:userId", authMiddleware, async (req, res) => {
   }
 });
 
-
-router.patch("/:id/hold", async (req, res) => {
+router.patch("/:id/hold", authMiddleware, async (req, res) => {
   try {
     const { status, holdReason } = req.body;
     const investment = await Investment.findByIdAndUpdate(
@@ -41,7 +45,8 @@ router.patch("/:id/hold", async (req, res) => {
 
     res.json(investment);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Error updating investment hold:", err);
+    res.status(500).json({ error: err.message || "Internal Server Error" });
   }
 });
 
