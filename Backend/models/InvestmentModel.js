@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const InvestmentSchema = new mongoose.Schema({
-  userId: { type: String, required: true, unique: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   amount: { type: Number, required: true },
   investmentDate: { type: Date, default: Date.now },
   growthData: [
@@ -10,8 +10,8 @@ const InvestmentSchema = new mongoose.Schema({
       value: { type: Number, required: true },
     },
   ],
-  status: { type: String, default: "Active" },
+  status: { type: String, enum: ["Active", "On Hold", "Closed"], default: "Active" },
   holdReason: { type: String, default: "" },
-});
+}, { timestamps: true });
 
 export default mongoose.model("Investment", InvestmentSchema);
