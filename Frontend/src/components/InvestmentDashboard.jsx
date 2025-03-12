@@ -23,49 +23,48 @@ const InvestmentDashboard = ({ userId }) => {
       return;
     }
 
-    const fetchInvestmentDetails = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("Authentication error: Please log in again.");
-        setLoading(false);
-        return;
-      }
-
+    const fetchInvestment = async () => {
       try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Authentication error. Please log in.");
+
         const response = await axios.get(
           `https://goldfocus-backend.onrender.com/api/investments/${userId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+
         setInvestment(response.data);
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to fetch investment details.");
+        if (err.response?.status === 404) {
+          setInvestment(null); // No investment found
+        } else {
+          setError(err.response?.data?.message || "Failed to fetch investment.");
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchInvestmentDetails();
+    fetchInvestment();
   }, [userId]);
 
-  const createInvestment = async (e) => {
+  const handleInvestment = async (e) => {
     e.preventDefault();
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
-      setError("Please enter a valid investment amount.");
-      return;
-    }
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("Authentication error: Please log in again.");
+      setError("Enter a valid amount.");
       return;
     }
 
     try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Authentication error. Please log in.");
+
       const response = await axios.post(
         "https://goldfocus-backend.onrender.com/api/investments",
         { amount: Number(amount), investmentDate: new Date().toISOString() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setInvestment(response.data);
       setAmount("");
       setError("");
@@ -74,49 +73,43 @@ const InvestmentDashboard = ({ userId }) => {
     }
   };
 
-  if (loading) return <p>Loading investment details...</p>;
+  if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
-
-  const chartData = investment?.growthData?.length
-    ? investment.growthData
-    : [{ date: new Date(), value: 0 }];
 
   return (
     <div className="max-w-3xl mx-auto p-4 bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-semibold mb-4">Investment Dashboard</h2>
 
-      {/* Investment Details */}
-      <div className="mb-4 p-4 bg-gray-100 rounded-lg">
-        <p className="text-lg font-semibold">Total Investment: ${investment?.amount || 0}</p>
-        <p className="text-sm text-gray-600">
-          Investment Date: {investment?.investmentDate ? new Date(investment.investmentDate).toLocaleDateString() : "N/A"}
-        </p>
-      </div>
+      {investment ? (
+        <>
+          {/* Investment Details */}
+          <div className="p-4 bg-gray-100 rounded-lg mb-4">
+            <p className="text-lg font-semibold">Total: ${investment.amount}</p>
+            <p className="text-sm text-gray-600">
+              Date: {new Date(investment.investmentDate).toLocaleDateString()}
+            </p>
+          </div>
 
-      {/* "On Hold" Status */}
-      {investment?.status === "On Hold" && (
-        <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
-          <p className="font-semibold">On Hold</p>
-          <p className="text-sm">{investment?.holdReason || "Pending approval"}</p>
-        </div>
+          {/* Investment Growth Chart */}
+          <h3 className="text-lg font-semibold mb-2">Investment Growth</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={investment.growthData || [{ date: new Date(), value: 0 }]}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" tickFormatter={(date) => new Date(date).toLocaleDateString()} />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="value" stroke="#4CAF50" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </>
+      ) : (
+        <p className="text-gray-500">No investment found. Create one below.</p>
       )}
 
-      {/* Investment Growth Chart */}
-      <h3 className="text-lg font-semibold mb-2">Investment Growth</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" tickFormatter={(date) => new Date(date).toLocaleDateString()} />
-          <YAxis />
-          <Tooltip />
-          <Line type="monotone" dataKey="value" stroke="#4CAF50" strokeWidth={2} />
-        </LineChart>
-      </ResponsiveContainer>
-
-      {/* Add New Investment Form */}
+      {/* Add Investment Form */}
       <div className="mt-6 p-4 bg-gray-100 rounded-lg">
         <h3 className="text-lg font-semibold mb-2">Add Investment</h3>
-        <form onSubmit={createInvestment} className="flex flex-col space-y-3">
+        <form onSubmit={handleInvestment} className="flex flex-col space-y-3">
           <input
             type="number"
             value={amount}
