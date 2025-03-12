@@ -26,8 +26,13 @@ const Navbar = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setIsAuthenticated(false);
+    localStorage.removeItem("investments");
+    window.location.reload();
     navigate("/");
   };
+
+ 
+  
 
   return (
     <nav className="bg-white h-[96px] shadow-md fixed w-full top-0 left-0 z-50 flex items-center">
