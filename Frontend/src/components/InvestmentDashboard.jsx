@@ -11,7 +11,7 @@ import {
 } from "recharts";
 
 const InvestmentDashboard = ({ userId }) => {
-  const [investment, setInvestment] = useState(null);
+  const [investments, setInvestments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
@@ -23,7 +23,7 @@ const InvestmentDashboard = ({ userId }) => {
       return;
     }
 
-    const fetchInvestment = async () => {
+    const fetchInvestments = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Authentication error. Please log in.");
@@ -33,15 +33,19 @@ const InvestmentDashboard = ({ userId }) => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        setInvestment(response.data);
+        setInvestments(response.data);
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to fetch investment.");
+        if (err.response?.status === 404) {
+          setInvestments([]);
+        } else {
+          setError(err.response?.data?.message || "Failed to fetch investments.");
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchInvestment();
+    fetchInvestments();
   }, [userId]);
 
   const handleInvestment = async (e) => {
@@ -53,96 +57,76 @@ const InvestmentDashboard = ({ userId }) => {
       return;
     }
 
-    if (!userId) {
-      setError("User ID is required.");
-      return;
-    }
-
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Authentication error. Please log in.");
 
-      const investmentData = {
-        userId,
-        amount: Number(amount),
-        investmentDate: new Date().toISOString(),
-      };
-
       const response = await axios.post(
         "https://goldfocus-backend.onrender.com/api/investments",
-        investmentData,
+        { userId, amount: Number(amount) },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setInvestment(response.data);
+      setInvestments([...investments, response.data]);
       setAmount("");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create investment.");
     }
   };
 
-  if (loading) return <p className="text-center text-gray-600">Loading...</p>;
+  if (loading) return <p className="text-center text-lg">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
-  return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-      <h2 className="text-2xl font-semibold mb-4 text-center">Investment Dashboard</h2>
+ 
+  const combinedGrowthData = investments.flatMap((investment) =>
+    investment.growthData.map((data) => ({
+      date: new Date(data.date).toLocaleDateString(),
+      value: data.value,
+    }))
+  );
 
-      {investment ? (
+  return (
+    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-2xl font-semibold mb-6 text-center">Investment Dashboard</h2>
+
+      {investments.length > 0 ? (
         <>
-          <div className="p-4 bg-gray-100 rounded-lg mb-4">
-            <p className="text-lg font-semibold">Total Investment: ${investment.amount}</p>
-            <p className="text-sm text-gray-600">
-              Date: {new Date(investment.investmentDate).toLocaleDateString()}
+          <div className="p-4 bg-gray-100 rounded-lg mb-6">
+            <p className="text-lg font-semibold">
+              Total Investments: ${investments.reduce((sum, inv) => sum + inv.amount, 0)}
             </p>
-            <p className="text-sm font-medium">
-              Status:{" "}
-              <span className={`px-2 py-1 rounded ${investment.status === "Active" ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"}`}>
-                {investment.status}
-              </span>
-            </p>
-            {investment.holdReason && (
-              <p className="text-sm text-red-500 mt-1">Hold Reason: {investment.holdReason}</p>
-            )}
           </div>
 
-          <h3 className="text-lg font-semibold mb-2">Investment Growth</h3>
-          {investment.growthData?.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={investment.growthData}>
+          <h3 className="text-lg font-semibold mb-4">Investment Growth</h3>
+          {combinedGrowthData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={350}>
+              <LineChart data={combinedGrowthData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" tickFormatter={(date) => new Date(date).toLocaleDateString()} />
+                <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
                 <Line type="monotone" dataKey="value" stroke="#4CAF50" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-500">No growth data available.</p>
+            <p className="text-gray-500 text-center">No growth data available.</p>
           )}
         </>
       ) : (
-        <p className="text-gray-500 text-center">No investment found. Create one below.</p>
+        <p className="text-center text-gray-500">No investments found. Add one below.</p>
       )}
 
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold mb-3">Add Investment</h3>
-        <form onSubmit={handleInvestment} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Investment Amount ($)</label>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full mt-1 p-2 border rounded-md focus:ring focus:ring-indigo-200"
-              placeholder="Enter amount"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition"
-          >
+      <div className="mt-8 p-6 bg-gray-100 rounded-lg">
+        <h3 className="text-lg font-semibold mb-4 text-center">Add Investment</h3>
+        <form onSubmit={handleInvestment} className="flex flex-col space-y-4">
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="p-3 border rounded-md"
+            placeholder="Enter investment amount"
+          />
+          <button type="submit" className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-md">
             Invest Now
           </button>
         </form>
