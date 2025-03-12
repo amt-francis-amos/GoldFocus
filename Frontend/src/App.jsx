@@ -20,41 +20,50 @@ const App = () => {
       try {
         const response = await axios.get("https://goldfocus-backend.onrender.com/api/auth/user");
         const fetchedUserId = response.data.userId;
-        setUserId(fetchedUserId);
-        localStorage.setItem("userId", fetchedUserId);
+  
+        if (fetchedUserId) {
+          setUserId(fetchedUserId);
+          localStorage.setItem("userId", fetchedUserId);
+        } else {
+          console.warn("User ID is null or undefined");
+        }
       } catch (error) {
         console.error("Error fetching user ID:", error);
         localStorage.removeItem("userId");
       }
     };
   
-    if (!localStorage.getItem("userId")) {
+    const storedUserId = localStorage.getItem("userId");
+    if (!storedUserId) {
       fetchUserId();
+    } else {
+      setUserId(storedUserId);
     }
   }, []);
   
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    setUserId(null);
+    navigate("/login");
+  };
+
   return (
     <div>
-      <Navbar />
+      <Navbar userId={userId} onLogout={handleLogout} />
       <Routes>
         <Route path="/login" element={<Login setUserId={setUserId} />} />
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
-        {userId && <Route
-  path="/dashboard"
-  element={
-    userId ? (
-      <InvestmentDashboard userId={userId} />
-    ) : (
-      <p>Loading user details...</p>
-    )
-  }
-/>}
+        {userId ? (
+          <Route path="/dashboard" element={<InvestmentDashboard userId={userId} />} />
+        ) : (
+          <Route path="/dashboard" element={<p>Loading user details...</p>} />
+        )}
       </Routes>
-
       {location.pathname !== "/login" && <Footer />}
     </div>
   );

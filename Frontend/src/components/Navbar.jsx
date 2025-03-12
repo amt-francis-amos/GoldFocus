@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import React from 'react'
+import { useState,useEffect } from 'react' 
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import { assets } from "../assets/assets";
