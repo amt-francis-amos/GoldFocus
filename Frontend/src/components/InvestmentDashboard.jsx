@@ -71,7 +71,6 @@ const InvestmentDashboard = ({ userId }) => {
       toast.error(err.response?.data?.message || "Failed to create investment.");
     }
   };
-  
 
   const handleHoldInvestment = async (investmentId) => {
     const holdReason = prompt("Enter a reason for holding this investment:");
@@ -110,6 +109,38 @@ const InvestmentDashboard = ({ userId }) => {
     }
   };
 
+  const handleResumeInvestment = async (investmentId) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Authentication error. Please log in.");
+
+      const response = await fetch(
+        `https://goldfocus-backend.onrender.com/api/investments/${investmentId}/resume`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        toast.success("Investment resumed successfully!");
+        setInvestments((prevInvestments) =>
+          prevInvestments.map((inv) =>
+            inv._id === investmentId ? { ...inv, status: "Active", holdReason: "" } : inv
+          )
+        );
+      } else {
+        const data = await response.json();
+        toast.error(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      toast.error("Error resuming investment.");
+    }
+  };
+
   const combinedGrowthData = investments.flatMap((investment) =>
     investment?.growthData?.map((data) => ({
       date: new Date(data.date).toLocaleDateString(),
@@ -122,63 +153,70 @@ const InvestmentDashboard = ({ userId }) => {
   return (
     <div className="mt-50">
       <div className="max-w-3xl mx-auto mt-10 p-6  bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-semibold mb-6 text-center">Investment Dashboard</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-center">Investment Dashboard</h2>
 
-      {loading && <p className="text-center text-lg">Loading...</p>}
+        {loading && <p className="text-center text-lg">Loading...</p>}
 
-      {!loading && investments.length > 0 && (
-        <>
-          <div className="p-4 bg-gray-100 rounded-lg mb-6">
-            <p className="text-lg font-semibold">Total Investments: ${investments[0].amount}</p>
-            <p>Status: {investments[0].status}</p>
-            <p>Hold Reason: {investments[0].holdReason || "None"}</p>
-            {investments[0].status !== "On Hold" && (
-              <button
-                onClick={() => handleHoldInvestment(investments[0]._id)}
-                className="bg-red-500 text-white p-2 rounded mt-4"
-              >
-                Hold Investment
-              </button>
+        {!loading && investments.length > 0 && (
+          <>
+            <div className="p-4 bg-gray-100 rounded-lg mb-6">
+              <p className="text-lg font-semibold">Total Investments: ${investments[0].amount}</p>
+              <p>Status: {investments[0].status}</p>
+              <p>Hold Reason: {investments[0].holdReason || "None"}</p>
+
+              {investments[0].status === "On Hold" ? (
+                <button
+                  onClick={() => handleResumeInvestment(investments[0]._id)}
+                  className="bg-blue-500 text-white p-2 rounded mt-4"
+                >
+                  Resume Investment
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleHoldInvestment(investments[0]._id)}
+                  className="bg-red-500 text-white p-2 rounded mt-4"
+                >
+                  Hold Investment
+                </button>
+              )}
+            </div>
+
+            <h3 className="text-lg font-semibold mb-4">Investment Growth</h3>
+            {combinedGrowthData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={350}>
+                <LineChart data={combinedGrowthData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="value" stroke="#4CAF50" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-gray-500 text-center">No growth data available.</p>
             )}
-          </div>
+          </>
+        )}
 
-          <h3 className="text-lg font-semibold mb-4">Investment Growth</h3>
-          {combinedGrowthData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={350}>
-              <LineChart data={combinedGrowthData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#4CAF50" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
-          ) : (
-            <p className="text-gray-500 text-center">No growth data available.</p>
-          )}
-        </>
-      )}
+        <form onSubmit={handleInvestment} className="mt-8 p-6 bg-gray-100 rounded-lg">
+          <h3 className="text-lg font-semibold mb-4 text-center">Add Investment</h3>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="p-3 border rounded-md w-full"
+            placeholder="Enter investment amount"
+          />
+          <button
+            type="submit"
+            className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-md w-full mt-4"
+          >
+            Invest Now
+          </button>
+        </form>
 
-      <form onSubmit={handleInvestment} className="mt-8 p-6 bg-gray-100 rounded-lg">
-        <h3 className="text-lg font-semibold mb-4 text-center">Add Investment</h3>
-        <input
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="p-3 border rounded-md w-full"
-          placeholder="Enter investment amount"
-        />
-        <button
-          type="submit"
-          className="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-md w-full mt-4"
-        >
-          Invest Now
-        </button>
-      </form>
-
-    
-      <ToastContainer position="top-right" autoClose={3000} />
-    </div>
+        <ToastContainer position="top-right" autoClose={3000} />
+      </div>
     </div>
   );
 };

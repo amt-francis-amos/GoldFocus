@@ -97,26 +97,26 @@ export const holdInvestment = async (req, res) => {
 };
 
 
-export const continueInvestment = async (req, res) => {
+export const resumeInvestment = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { investmentId } = req.params;
 
-    const investment = await Investment.findById(id);
+    const investment = await Investment.findById(investmentId);
     if (!investment) {
       return res.status(404).json({ message: "Investment not found." });
     }
 
-    if (investment.status !== "On Hold" && investment.status !== "Closed") {
-      return res.status(400).json({ message: "Investment is already active." });
+    if (investment.status !== "On Hold") {
+      return res.status(400).json({ message: "Investment is not on hold." });
     }
 
     investment.status = "Active";
-    investment.holdReason = "";
-
+    investment.holdReason = ""; // Clear the hold reason
     await investment.save();
-    return res.status(200).json({ message: "Investment has been reactivated.", investment });
+
+    return res.status(200).json({ message: "Investment resumed successfully!", investment });
   } catch (error) {
-    console.error("Error reactivating investment:", error);
+    console.error("Error resuming investment:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
