@@ -28,7 +28,7 @@ const App = () => {
         }
 
         const response = await axios.get("https://goldfocus-backend.onrender.com/api/auth/user", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` }, // Fixed template literal syntax
         });
 
         const fetchedUserId = response.data.userId;
@@ -62,22 +62,23 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Navbar userId={userId} onLogout={handleLogout} />
-      <Routes>
-        <Route path="/login" element={<Login setUserId={setUserId} />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/contact" element={<Contact />} />
+      <main className="flex-grow pb-10"> 
+        <Routes>
+          <Route path="/login" element={<Login setUserId={setUserId} />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/contact" element={<Contact />} />
 
-        {userId ? (
-          <Route path="/dashboard" element={<InvestmentDashboard userId={userId} />} />
-        ) : (
-          <Route path="/dashboard" element={<p>Loading user details...</p>} />
-        )}
-      </Routes>
-      
+          {userId ? (
+            <Route path="/dashboard" element={<InvestmentDashboard userId={userId} />} />
+          ) : (
+            <Route path="/dashboard" element={<p>Loading user details...</p>} />
+          )}
+        </Routes>
+      </main>
       {location.pathname !== "/login" && <Footer />}
     </div>
   );

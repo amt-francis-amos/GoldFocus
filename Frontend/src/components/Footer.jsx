@@ -8,7 +8,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-20">
+    <footer className="bg-gray-900 text-white py-8 mt-auto">
       <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
           <h2 className="text-2xl font-bold">Imperial Gold Security</h2>
@@ -57,7 +57,6 @@ const Footer = () => {
               placeholder="Enter your email"
               className="w-full px-3 py-2 rounded-l-lg focus:outline-none text-black bg-gray-100 focus:bg-white"
             />
-
             <button className="bg-yellow-500 px-4 py-2 rounded-r-lg hover:bg-yellow-600">
               Subscribe
             </button>
@@ -85,7 +84,8 @@ const Footer = () => {
         </div>
       </div>
     </footer>
-  );
+  ); 
 };
 
 export default Footer;
+
