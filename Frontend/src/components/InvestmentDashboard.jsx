@@ -58,6 +58,12 @@ const InvestmentDashboard = ({ userId }) => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Authentication error. Please log in.");
   
+      // Check if the current investment is on hold
+      if (investments.length > 0 && investments[0].status === "On Hold") {
+        await handleResumeInvestment(investments[0]._id);
+      }
+  
+      // Proceed with the investment
       const response = await axios.post(
         "https://goldfocus-backend.onrender.com/api/investments",
         { userId, amount: Number(amount) }, 
@@ -71,6 +77,7 @@ const InvestmentDashboard = ({ userId }) => {
       toast.error(err.response?.data?.message || "Failed to create investment.");
     }
   };
+  
 
   const handleHoldInvestment = async (investmentId) => {
     const holdReason = prompt("Enter a reason for holding this investment:");

@@ -7,33 +7,41 @@ export const createInvestment = async (req, res) => {
   session.startTransaction();
 
   try {
-    const { userId, amount, investmentDate, status, holdReason } = req.body;
+    const { userId, amount } = req.body;
 
     if (!userId || !amount) {
       return res.status(400).json({ message: "Missing required fields: userId and amount." });
     }
 
-    // Create a new investment instead of modifying the existing one
-    const initialDate = new Date(investmentDate || Date.now());
-    const growthData = [];
+    // Check if the user has an existing investment
+    let existingInvestment = await Investment.findOne({ userId });
 
-    for (let i = 0; i < 10; i++) {
-      const newDate = new Date(initialDate);
-      newDate.setDate(newDate.getDate() + i * 30);
-      const growthValue = amount * (1 + 0.02 * i);
-      growthData.push({ date: newDate, value: growthValue });
+    if (existingInvestment) {
+      if (existingInvestment.status === "On Hold") {
+        // Allow resuming the on-hold investment
+        existingInvestment.status = "Active";
+        existingInvestment.holdReason = "";
+        existingInvestment.amount += amount; // Optional: Add new amount to the existing investment
+        await existingInvestment.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+        return res.status(200).json(existingInvestment);
+      } 
     }
 
+    // If no existing investment, create a new one
     const newInvestment = new Investment({
       userId,
       amount,
-      investmentDate: initialDate,
-      growthData,
-      status: status || "Active",
-      holdReason: holdReason || "",
+      investmentDate: new Date(),
+      growthData: [],
+      status: "Active",
+      holdReason: "",
     });
 
     const savedInvestment = await newInvestment.save({ session });
+
     await session.commitTransaction();
     session.endSession();
 
@@ -41,11 +49,11 @@ export const createInvestment = async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-
     console.error("Error creating investment:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
 // Get User Investments
