@@ -111,7 +111,7 @@ export const resumeInvestment = async (req, res) => {
     }
 
     investment.status = "Active";
-    investment.holdReason = ""; // Clear the hold reason
+    investment.holdReason = ""; 
     await investment.save();
 
     return res.status(200).json({ message: "Investment resumed successfully!", investment });
