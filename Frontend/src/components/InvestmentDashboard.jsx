@@ -124,7 +124,8 @@ const InvestmentDashboard = ({ userId }) => {
   combinedGrowthData.sort((a, b) => new Date(a.date) - new Date(b.date));
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+    <div className="mt-50">
+      <div className="max-w-3xl mx-auto mt-10 p-6  bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-semibold mb-6 text-center">Investment Dashboard</h2>
 
       {loading && <p className="text-center text-lg">Loading...</p>}
@@ -181,6 +182,7 @@ const InvestmentDashboard = ({ userId }) => {
 
     
       <ToastContainer position="top-right" autoClose={3000} />
+    </div>
     </div>
   );
 };
