@@ -48,34 +48,30 @@ const InvestmentDashboard = ({ userId }) => {
 
   const handleInvestment = async (e) => {
     e.preventDefault();
-
+  
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
       toast.error("Enter a valid investment amount.");
       return;
     }
-
-    if (investments.length > 0 && (investments[0].status === "On Hold" || investments[0].status === "Closed")) {
-      toast.error("Investment is on hold or closed. You cannot invest at this time.");
-      return;
-    }
-
+  
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Authentication error. Please log in.");
-
+  
       const response = await axios.post(
         "https://goldfocus-backend.onrender.com/api/investments",
-        { userId, amount: Number(amount) },
+        { userId, amount: Number(amount) }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      setInvestments([response.data]);
+  
+      setInvestments((prevInvestments) => [...prevInvestments, response.data]);
       setAmount("");
       toast.success("Investment added successfully!");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to create investment.");
     }
   };
+  
 
   const handleHoldInvestment = async (investmentId) => {
     const holdReason = prompt("Enter a reason for holding this investment:");

@@ -13,77 +13,40 @@ export const createInvestment = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields: userId and amount." });
     }
 
-    let existingInvestment = await Investment.findOne({ userId }).session(session);
+    // Create a new investment instead of modifying the existing one
+    const initialDate = new Date(investmentDate || Date.now());
+    const growthData = [];
 
-    if (existingInvestment) {
-      // Prevent investing if the status is "On Hold" or "Closed"
-      if (existingInvestment.status === "On Hold" || existingInvestment.status === "Closed") {
-        return res.status(400).json({ message: "Investment is on hold or closed. You cannot invest at this time." });
-      }
-
-      existingInvestment.amount += amount;
-
-      if (status) existingInvestment.status = status;
-      if (holdReason !== undefined) existingInvestment.holdReason = holdReason;
-
-      let lastGrowthDate = new Date(
-        existingInvestment.growthData?.slice(-1)[0]?.date || investmentDate || Date.now()
-      );
-
-      const newGrowthData = [];
-
-      for (let i = 1; i <= 10; i++) {
-        let growthDate = new Date(lastGrowthDate);
-        growthDate.setDate(growthDate.getDate() + 30);
-
-        if (!existingInvestment.growthData.some((g) => new Date(g.date).getTime() === growthDate.getTime())) {
-          const newValue = existingInvestment.amount * (1 + 0.02 * i);
-          newGrowthData.push({ date: growthDate, value: newValue });
-        }
-      }
-
-      existingInvestment.growthData.push(...newGrowthData);
-      existingInvestment.growthData.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-      await existingInvestment.save({ session });
-      await session.commitTransaction();
-      session.endSession();
-
-      return res.status(200).json(existingInvestment);
-    } else {
-      const initialDate = new Date(investmentDate || Date.now());
-      const growthData = [];
-
-      for (let i = 0; i < 10; i++) {
-        const newDate = new Date(initialDate);
-        newDate.setDate(newDate.getDate() + i * 30);
-        const growthValue = amount * (1 + 0.02 * i);
-        growthData.push({ date: newDate, value: growthValue });
-      }
-
-      const newInvestment = new Investment({
-        userId,
-        amount,
-        investmentDate: initialDate,
-        growthData,
-        status: status || "Active", 
-        holdReason: holdReason || "",
-      });
-
-      const savedInvestment = await newInvestment.save({ session });
-      await session.commitTransaction();
-      session.endSession();
-
-      return res.status(201).json(savedInvestment);
+    for (let i = 0; i < 10; i++) {
+      const newDate = new Date(initialDate);
+      newDate.setDate(newDate.getDate() + i * 30);
+      const growthValue = amount * (1 + 0.02 * i);
+      growthData.push({ date: newDate, value: growthValue });
     }
+
+    const newInvestment = new Investment({
+      userId,
+      amount,
+      investmentDate: initialDate,
+      growthData,
+      status: status || "Active",
+      holdReason: holdReason || "",
+    });
+
+    const savedInvestment = await newInvestment.save({ session });
+    await session.commitTransaction();
+    session.endSession();
+
+    return res.status(201).json(savedInvestment);
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
 
-    console.error("Error creating/updating investment:", error);
+    console.error("Error creating investment:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 // Get User Investments
 export const getUserInvestments = async (req, res) => {
